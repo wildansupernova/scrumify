@@ -4,22 +4,37 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import crystal.scrumify.R;
+import crystal.scrumify.adapters.TaskAdapter;
+import crystal.scrumify.models.Task;
 import crystal.scrumify.utils.ConstantUtils;
 
 public class KanbanColumn extends Fragment {
 
-    private int fragmentArg;
+    /*** XML View Component ***/
     private View rootView;
+    private RecyclerView recyclerView;
+    private TextView emptyView;
+
+    /*** Fragment Data ***/
+    private int fragmentArg;
+    private List<Task> tasks;
+    private TaskAdapter adapter;
 
     public KanbanColumn() {
-        // Required empty public constructor
+        tasks = new ArrayList<>();
+        adapter = new TaskAdapter(tasks);
     }
 
     public static KanbanColumn newInstance(int fragmentArg) {
@@ -34,13 +49,41 @@ public class KanbanColumn extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.fragment_kanban_column, container, false);
-        TextView textView = rootView.findViewById(R.id.fragment_title);
-        textView.setText(getColumnTitle());
+
+        bindView();
+        setupView();
+        bindData();
+        bindListener();
+
         return rootView;
+    }
+
+    private void bindView() {
+        recyclerView = rootView.findViewById(R.id.kanban_column_recycler);
+        emptyView = rootView.findViewById(R.id.kanban_column_empty);
+
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        recyclerView.setAdapter(adapter);
+    }
+
+    private void setupView() {
+        if (tasks.isEmpty()) {
+            recyclerView.setVisibility(View.GONE);
+            emptyView.setVisibility(View.VISIBLE);
+        } else {
+            recyclerView.setVisibility(View.VISIBLE);
+            emptyView.setVisibility(View.GONE);
+        }
+    }
+
+    private void bindData() {
+
+    }
+
+    private void bindListener() {
+
     }
 
     public String getColumnTitle() {

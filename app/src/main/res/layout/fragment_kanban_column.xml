@@ -5,13 +5,17 @@
     android:layout_height="match_parent"
     tools:context=".fragments.KanbanColumn">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
-        android:id="@+id/fragment_title"
-        android:textSize="30sp"
-        android:gravity="center"
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/kanban_column_recycler"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:layout_height="match_parent" />
+
+    <TextView
+        android:textSize="24sp"
+        android:gravity="center"
+        android:id="@+id/kanban_column_empty"
+        android:text="No task left :)"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 
 </FrameLayout>
