@@ -38,13 +38,13 @@
             android:text="Assignee: Dion Saputra"
             android:textAppearance="@style/TextAppearance.AppCompat.Subhead.Inverse"
             android:textColor="@color/colorSecondaryTextDefaultMaterialLight"
-            app:layout_constraintBottom_toTopOf="@+id/supporting_text"
+            app:layout_constraintBottom_toTopOf="@+id/task_description"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/task_title" />
 
         <TextView
-            android:id="@+id/supporting_text"
+            android:id="@+id/task_description"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
