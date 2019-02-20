@@ -1,11 +1,9 @@
 package crystal.scrumify.activities;
 
-import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
-import android.view.Gravity;
+import android.support.v4.view.ViewPager;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -15,7 +13,13 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import crystal.scrumify.R;
+import crystal.scrumify.adapters.KanbanAdapter;
+import crystal.scrumify.fragments.KanbanColumn;
+import crystal.scrumify.utils.ConstantUtils;
 
 public class KanbanActivity extends BaseActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -26,15 +30,8 @@ public class KanbanActivity extends BaseActivity
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle toggleButton;
     private NavigationView navigationView;
-
-    /*** Activity Listener ***/
-    private View.OnClickListener actionButtonListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            Snackbar.make(v, "Replace with your own action", Snackbar.LENGTH_LONG)
-                    .setAction("Action", null).show();
-        }
-    };
+    private ViewPager viewPager;
+    private TabLayout tabLayout;
 
     public KanbanActivity() {
         super(R.layout.activity_kanban);
@@ -43,13 +40,17 @@ public class KanbanActivity extends BaseActivity
     @Override
     public void bindView() {
         toolbar = findViewById(R.id.toolbar);
-        actionButton = findViewById(R.id.fab);
         drawerLayout = findViewById(R.id.drawer_layout);
         navigationView = findViewById(R.id.nav_view);
+
+        actionButton = findViewById(R.id.kanban_fab);
+        tabLayout = findViewById(R.id.kanban_tab_layout);
+        viewPager = findViewById(R.id.kanban_view_pager);
+        tabLayout = findViewById(R.id.kanban_tab_layout);
+
         toggleButton = new ActionBarDrawerToggle(
                 this, drawerLayout, toolbar, R.string.navigation_drawer_open,
                 R.string.navigation_drawer_close);
-
     }
 
     @Override
@@ -60,10 +61,19 @@ public class KanbanActivity extends BaseActivity
 
     @Override
     public void bindData() {
-        TabLayout tabLayout = (TabLayout) findViewById(R.id.tab_layout);
-        tabLayout.addTab(tabLayout.newTab().setText("Ikhtisar"));
-        tabLayout.addTab(tabLayout.newTab().setText("Berita"));
-        tabLayout.addTab(tabLayout.newTab().setText("Komunitas"));
+        List<KanbanColumn> kanbanColumns = new ArrayList<>();
+        kanbanColumns.add(KanbanColumn.newInstance(ConstantUtils.KANBAN_BACKLOG_FRAG_ARG));
+        kanbanColumns.add(KanbanColumn.newInstance(ConstantUtils.KANBAN_TODO_FRAG_ARG));
+        kanbanColumns.add(KanbanColumn.newInstance(ConstantUtils.KANBAN_PROGRESS_FRAG_ARG));
+        kanbanColumns.add(KanbanColumn.newInstance(ConstantUtils.KANBAN_DONE_FRAG_ARG));
+
+        for (KanbanColumn column : kanbanColumns) {
+            System.out.println(String.valueOf(column.getFragmentArg()) + "::" + column.getColumnTitle());
+            tabLayout.addTab(tabLayout.newTab().setText(column.getColumnTitle()));
+        }
+
+        KanbanAdapter adapter = new KanbanAdapter(getSupportFragmentManager(), kanbanColumns);
+        viewPager.setAdapter(adapter);
     }
 
     @Override
@@ -71,6 +81,8 @@ public class KanbanActivity extends BaseActivity
         actionButton.setOnClickListener(actionButtonListener);
         drawerLayout.addDrawerListener(toggleButton);
         navigationView.setNavigationItemSelectedListener(this);
+        viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
+        tabLayout.addOnTabSelectedListener(tabSelectedListener);
     }
 
     @Override
@@ -136,4 +148,30 @@ public class KanbanActivity extends BaseActivity
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
+
+    /*** Activity Listener ***/
+    private View.OnClickListener actionButtonListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            Snackbar.make(v, "Replace with your own action", Snackbar.LENGTH_LONG)
+                    .setAction("Action", null).show();
+        }
+    };
+
+    private TabLayout.OnTabSelectedListener tabSelectedListener = new TabLayout.OnTabSelectedListener() {
+        @Override
+        public void onTabSelected(TabLayout.Tab tab) {
+            viewPager.setCurrentItem(tab.getPosition(), true);
+        }
+
+        @Override
+        public void onTabUnselected(TabLayout.Tab tab) {
+
+        }
+
+        @Override
+        public void onTabReselected(TabLayout.Tab tab) {
+
+        }
+    };
 }

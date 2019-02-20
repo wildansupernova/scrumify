@@ -24,7 +24,7 @@
         android:layout_height="match_parent">
 
         <android.support.design.widget.TabLayout
-            android:id="@+id/tab_layout"
+            android:id="@+id/kanban_tab_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="0dp"
@@ -32,8 +32,14 @@
             android:elevation="4dp"
             android:minHeight="?attr/actionBarSize" />
 
+        <android.support.v4.view.ViewPager
+            android:id="@+id/kanban_view_pager"
+            android:layout_width="match_parent"
+            android:layout_height="fill_parent"
+            android:layout_marginTop="?attr/actionBarSize" />
+
         <android.support.design.widget.FloatingActionButton
-            android:id="@+id/fab"
+            android:id="@+id/kanban_fab"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|end"
@@ -41,11 +47,5 @@
             app:srcCompat="@android:drawable/ic_dialog_email" />
 
     </FrameLayout>
-
-    <android.support.v4.view.ViewPager
-        android:id="@+id/kanban_pager"
-        android:layout_width="match_parent"
-        android:layout_height="fill_parent"
-        android:layout_marginTop="?attr/actionBarSize" />
 
 </LinearLayout>
