@@ -13,11 +13,23 @@ public class ApiResponse<T> {
         return status;
     }
 
+    public void setStatus(int status) {
+        this.status = status;
+    }
+
     public String getStatusMessage() {
         return statusMessage;
     }
 
+    public void setStatusMessage(String statusMessage) {
+        this.statusMessage = statusMessage;
+    }
+
     public T getData() {
         return data;
+    }
+
+    public void setData(T data) {
+        this.data = data;
     }
 }
