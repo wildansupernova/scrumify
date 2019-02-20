@@ -79,7 +79,17 @@ public class KanbanColumn extends Fragment {
     }
 
     private void bindData() {
-
+        tasks = new ArrayList<>();
+        for (int i=0; i<10; i++) {
+            tasks.add(new Task(
+                    "Blockchain implementation",
+                    "No description for this task",
+                    "Dion Saputra",
+                    i%4)
+            );
+        }
+        adapter.setItems(tasks);
+        setupView();
     }
 
     private void bindListener() {
