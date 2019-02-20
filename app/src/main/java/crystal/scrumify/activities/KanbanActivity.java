@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.design.widget.TabLayout;
 import android.view.Gravity;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -35,17 +36,6 @@ public class KanbanActivity extends BaseActivity
         }
     };
 
-    private View.OnClickListener toggleButtonListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            if (drawerLayout.isDrawerOpen(v)) {
-                drawerLayout.closeDrawer(Gravity.LEFT);
-            } else {
-                drawerLayout.openDrawer(Gravity.LEFT);
-            }
-        }
-    };
-
     public KanbanActivity() {
         super(R.layout.activity_kanban);
     }
@@ -63,11 +53,6 @@ public class KanbanActivity extends BaseActivity
     }
 
     @Override
-    protected void onPostCreate(@Nullable Bundle savedInstanceState) {
-        super.onPostCreate(savedInstanceState);
-    }
-
-    @Override
     public void setupView() {
         setSupportActionBar(toolbar);
         toggleButton.syncState();
@@ -75,7 +60,10 @@ public class KanbanActivity extends BaseActivity
 
     @Override
     public void bindData() {
-
+        TabLayout tabLayout = (TabLayout) findViewById(R.id.tab_layout);
+        tabLayout.addTab(tabLayout.newTab().setText("Ikhtisar"));
+        tabLayout.addTab(tabLayout.newTab().setText("Berita"));
+        tabLayout.addTab(tabLayout.newTab().setText("Komunitas"));
     }
 
     @Override
