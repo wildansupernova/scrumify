@@ -1,5 +1,6 @@
 package crystal.scrumify.activities;
 
+import android.content.Intent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -9,6 +10,7 @@ import crystal.scrumify.R;
 
 public class AuthActivity extends BaseActivity {
 
+    /*** XML View Component ***/
     private EditText nameInput;
     private EditText emailInput;
     private EditText passwordInput;
@@ -17,13 +19,14 @@ public class AuthActivity extends BaseActivity {
     private Button registerButton;
     private TextView switchText;
 
+    /*** Activity Data ***/
     private String name;
     private String email;
     private String password;
     private String confirm;
     private boolean isLoginState = true;
 
-    public AuthActivity(int layout) {
+    public AuthActivity() {
         super(R.layout.activity_auth);
     }
 
@@ -74,11 +77,11 @@ public class AuthActivity extends BaseActivity {
     }
 
     public void login(View view) {
-
+        startActivity(new Intent(this, KanbanActivity.class));
     }
 
     public void register(View view) {
-
+        startActivity(new Intent(this, KanbanActivity.class));
     }
 
     public void switchAction(View view) {
