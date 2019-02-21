@@ -2,7 +2,7 @@ package crystal.scrumify.models;
 
 public class User {
 
-    private String id;
+    private int id;
     private String name;
     private String email;
     private String email_verified_at;
@@ -13,11 +13,11 @@ public class User {
     public User() {
     }
 
-    public String getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(int id) {
         this.id = id;
     }
 

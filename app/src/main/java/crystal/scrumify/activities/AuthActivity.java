@@ -16,6 +16,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Task;
 
@@ -29,9 +30,11 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import crystal.scrumify.utils.PreferenceUtils;
+
 import static crystal.scrumify.utils.PermissionUtils.isPermissionGranted;
 
-public class AuthActivity extends BaseActivity {
+public class AuthActivity extends BaseActivity implements View.OnClickListener {
 
     /*** XML View Component ***/
     private EditText nameInput;
@@ -51,6 +54,7 @@ public class AuthActivity extends BaseActivity {
     private boolean isLoginState = true;
 
     private GoogleSignInClient mGoogleSignInClient;
+    private SignInButton mSignInButton;
     public AuthActivity() {
         super(R.layout.activity_auth);
     }
@@ -88,8 +92,11 @@ public class AuthActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestEmail()
+                .requestIdToken("985205803004-qrt67dtq0ad9spdci4ql8ulakv2nlap2.apps.googleusercontent.com")
                 .build();
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
+        mSignInButton = findViewById(R.id.sign_in_button);
+        findViewById(R.id.sign_in_button).setOnClickListener(this);
     }
 
     @Override
@@ -116,16 +123,27 @@ public class AuthActivity extends BaseActivity {
 
     }
 
-    public void login(View view) {
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.sign_in_button:
+                login();
+                break;
+            // ...
+        }
+    }
+
+    public void login() {
         Intent signInIntent = mGoogleSignInClient.getSignInIntent();
         startActivityForResult(signInIntent, RC_SIGN_IN);
+        Log.d(TAG,"MASUK");
     }
 
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
+        Log.d(TAG,"MASUKResult");
         // Result returned from launching the Intent from GoogleSignInClient.getSignInIntent(...);
         if (requestCode == RC_SIGN_IN) {
             // The Task returned from this call is always completed, no need to attach
@@ -140,10 +158,21 @@ public class AuthActivity extends BaseActivity {
             GoogleSignInAccount account = completedTask.getResult(ApiException.class);
 
             // Signed in successfully, show authenticated UI.
+            Log.d(TAG,account.getEmail());
+            Log.d(TAG,account.getIdToken());
+
+
+
             serverLogin(account.getIdToken());
         } catch (ApiException e) {
             // The ApiException status code indicates the detailed failure reason.
-            // Please refer to the GoogleSignInStatusCodes class reference for more information.
+            // Please refer to the GoogleSignInStatusCodes class reference for more info
+//            Log.d(TAG,"gagal");
+//            Log.d(TAG,"gagal");
+//            Log.d(TAG,"gagal");
+//            Log.d(TAG,"gagal");
+//            Log.d(TAG,"gagal");
+
             Log.w(TAG, "signInResult:failed code=" + e.getStatusCode());
             serverLogin(null);
         }
@@ -156,19 +185,35 @@ public class AuthActivity extends BaseActivity {
                     .enqueue(new Callback<LoginResponse>() {
                         @Override
                         public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
+                            Log.d(TAG,"berhasil");
+                            Log.d(TAG,"berhasil");
+                            Log.d(TAG,"berhasil");
+                            Log.d(TAG,"berhasil");
+                            Log.d(TAG,response.body().toString());
                             if (response.isSuccessful()) {
                                 User user = response.body().getData();
-                                SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(AuthActivity.this);
-                                SharedPreferences.Editor editor = preferences.edit();
-                                editor.putString("token", user.getToken());
-                                editor.putBoolean("isLogin", true);
-                                editor.apply();
+                                String email = user.getEmail();
+                                Log.d(TAG,user.getEmail());
+                                String nameUser = user.getName();
+                                String token = user.getToken();
+                                int userId = user.getId();
+                                PreferenceUtils.setEmail(AuthActivity.this,email);
+                                PreferenceUtils.setLogin(AuthActivity.this,true);
+                                PreferenceUtils.setName(AuthActivity.this,nameUser);
+                                PreferenceUtils.setToken(AuthActivity.this,token);
+                                PreferenceUtils.setUserId(AuthActivity.this,userId);
+                                Log.d(TAG, email);
                                 startActivity(new Intent(AuthActivity.this, KanbanActivity.class));
                             }
                         }
 
                         @Override
                         public void onFailure(Call<LoginResponse> call, Throwable t) {
+                            Log.d(TAG,"gagal");
+                            Log.d(TAG,"gagal");
+                            Log.d(TAG,"gagal");
+                            Log.d(TAG,"gagal");
+                            Log.d(TAG,"gagal");
                             Toast.makeText(AuthActivity.this, t.getMessage(), Toast.LENGTH_SHORT).show();
                         }
                     });

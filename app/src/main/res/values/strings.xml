@@ -4,7 +4,7 @@
     <string name="email">Email</string>
     <string name="password">Password</string>
     <string name="confirm">Password Confirmation</string>
-    <string name="login">Login</string>
+    <string name="login">Login Google</string>
     <string name="register">Register</string>
     <string name="register_word">Doesn\'t have an account?</string>
     <string name="title_activity_home">HomeActivity</string>
@@ -25,5 +25,6 @@
     <string name="subtext">Subtitle here</string>
     <string name="action_1">Action 1</string>
     <string name="action_2">Action 2</string>
+    <string name="google_client_id">985205803004-8tnikqvt7p31blrcnbne95ogvlmr0s95.apps.googleusercontent.com</string>
     <string name="expanded_supporting">I\'m a thing. But, like most politicians, he promised more than he could deliver. </string>
 </resources>
