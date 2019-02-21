@@ -1,4 +1,4 @@
-package crystal.scrumify.filetools;
+package crystal.scrumify.utils;
 
 import android.content.ActivityNotFoundException;
 import android.content.Context;
@@ -20,9 +20,9 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-import static crystal.scrumify.filetools.LogUtils.LOGE;
+import static crystal.scrumify.utils.LogUtils.LOGE;
 
-public class PDFCreator {
+public class PdfCreator {
 
     public static void createPdf(String destFile, Context mContext, String dateNotulen, String notulen) {
 

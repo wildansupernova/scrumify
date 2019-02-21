@@ -1,7 +1,7 @@
-package crystal.scrumify.filetools;
+package crystal.scrumify.utils;
 
-import static crystal.scrumify.filetools.LogUtils.LOGD;
-import static crystal.scrumify.filetools.LogUtils.LOGE;
+import static crystal.scrumify.utils.LogUtils.LOGD;
+import static crystal.scrumify.utils.LogUtils.LOGE;
 import crystal.scrumify.R;
 
 import android.content.ActivityNotFoundException;
