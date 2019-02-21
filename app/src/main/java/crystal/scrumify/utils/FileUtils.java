@@ -1,7 +1,5 @@
 package crystal.scrumify.utils;
 
-import static crystal.scrumify.utils.LogUtils.LOGD;
-import static crystal.scrumify.utils.LogUtils.LOGE;
 import crystal.scrumify.R;
 
 import android.content.ActivityNotFoundException;
@@ -13,6 +11,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.support.v4.content.FileProvider;
+import android.util.Log;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -26,6 +25,8 @@ import java.util.List;
 
 public class FileUtils {
 
+    public static final String TAG = FileUtils.class.getSimpleName();
+    
     private static final String extensions[] = new String[]{"avi", "3gp", "mp4", "mp3", "jpeg", "jpg",
             "gif", "png",
             "pdf", "docx", "doc", "xls", "xlsx", "csv", "ppt", "pptx",
@@ -141,7 +142,7 @@ public class FileUtils {
                 if (out != null) {
 
                     Bitmap bit = BitmapFactory.decodeFile(src.getPath());
-                    LOGD("Bitmap : " + bit);
+                    Log.d(TAG,"Bitmap : " + bit);
 
                     if (bit.getWidth() > 700) {
                         if (bit.getHeight() > 700)
@@ -157,7 +158,7 @@ public class FileUtils {
 
                     bit.compress(Bitmap.CompressFormat.JPEG, 90, out);
                 }
-                LOGD("File Compressed...");
+                Log.d(TAG,"File Compressed...");
             } else {
                 byte[] buf = new byte[1024 * 4];
                 int len;
@@ -171,13 +172,13 @@ public class FileUtils {
 
         } catch (FileNotFoundException e) {
             // TODO Auto-generated catch block
-            LOGE("Compressing ERror :  " + e.getLocalizedMessage());
+            Log.e(TAG,"Compressing ERror :  " + e.getLocalizedMessage());
         } catch (IOException e) {
             // TODO Auto-generated catch block
-            LOGE("Compressing ERror IOE : " + e.getLocalizedMessage());
+            Log.e(TAG,"Compressing ERror IOE : " + e.getLocalizedMessage());
         } catch (Exception e) {
             // TODO: handle exception
-            LOGE("Compressing ERror Other: " + e.getLocalizedMessage());
+            Log.e(TAG,"Compressing ERror Other: " + e.getLocalizedMessage());
         }
     }
 
@@ -202,14 +203,14 @@ public class FileUtils {
                 if (out != null) {
 
                     Bitmap bit = BitmapFactory.decodeFile(src.getPath());
-                    LOGD("Bitmap : " + bit);
+                    Log.d(TAG,"Bitmap : " + bit);
 
                     if (bit.getWidth() > 700 || bit.getHeight() > 700) {
                         bit = Bitmap.createScaledBitmap(bit, 700, 700, true);
                     }
                     bit.compress(Bitmap.CompressFormat.JPEG, 90, out);
                 }
-                LOGD("File Compressed...");
+                Log.d(TAG,"File Compressed...");
             } else {
 
                 // Transfer bytes from in to out
@@ -227,17 +228,17 @@ public class FileUtils {
              * Delete File from Source folder...
              */
             if (src.delete())
-                LOGD("File Successfully Copied...");
+                Log.d(TAG,"File Successfully Copied...");
 
         } catch (FileNotFoundException e) {
             // TODO Auto-generated catch block
-            LOGE("Compressing ERror :  " + e.getLocalizedMessage());
+            Log.e(TAG,"Compressing ERror :  " + e.getLocalizedMessage());
         } catch (IOException e) {
             // TODO Auto-generated catch block
-            LOGE("Compressing ERror IOE : " + e.getLocalizedMessage());
+            Log.e(TAG,"Compressing ERror IOE : " + e.getLocalizedMessage());
         } catch (Exception e) {
             // TODO: handle exception
-            LOGE("Compressing ERror Other: " + e.getLocalizedMessage());
+            Log.e(TAG,"Compressing ERror Other: " + e.getLocalizedMessage());
         }
     }
 
