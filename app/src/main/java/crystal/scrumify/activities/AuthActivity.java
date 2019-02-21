@@ -96,6 +96,7 @@ public class AuthActivity extends BaseActivity {
     }
 
     public void login(View view) {
+        /*
         ApiService.getApi().login("eyJhbGciOiJSUzI1NiIsImtpZCI6IjdkNjgwZDhjNzBkNDRlOTQ3MTMzY2JkNDk5ZWJjMWE2MWMzZDVhYmMiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJhY2NvdW50cy5nb29nbGUuY29tIiwiYXpwIjoiNTUwMDQzOTE0OTcyLTAxcWwwYnNiMjlsZnUxdnV0ZGtsajFyYWQzcDFlb2lmLmFwcHMuZ29vZ2xldXNlcmNvbnRlbnQuY29tIiwiYXVkIjoiNTUwMDQzOTE0OTcyLTAxcWwwYnNiMjlsZnUxdnV0ZGtsajFyYWQzcDFlb2lmLmFwcHMuZ29vZ2xldXNlcmNvbnRlbnQuY29tIiwic3ViIjoiMTExOTkwNDk5ODI5NDQyNzMyNzM5IiwiZW1haWwiOiJhbG5hdGFyYXdAZ21haWwuY29tIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsImF0X2hhc2giOiJ2V2JTRFAxN25VZ3JoOEFiNXhldm5BIiwibmFtZSI6IldpbGRhbiBEaWNreSBBbG5hdGFyYSIsInBpY3R1cmUiOiJodHRwczovL2xoNS5nb29nbGV1c2VyY29udGVudC5jb20vLW5HU29FZ2s4QzFjL0FBQUFBQUFBQUFJL0FBQUFBQUFBQWtVL1RlV2RrTC1UYllVL3M5Ni1jL3Bob3RvLmpwZyIsImdpdmVuX25hbWUiOiJXaWxkYW4gRGlja3kiLCJmYW1pbHlfbmFtZSI6IkFsbmF0YXJhIiwibG9jYWxlIjoiZW4iLCJpYXQiOjE1NTA3Mjc4MjgsImV4cCI6MTU1MDczMTQyOCwianRpIjoiNjk3ZTQxY2I2NmZlY2MxOWQzYzQ2ZGYzNmU4ZTEwMmU1NmQ5NzY4OSJ9.bRH4ZCmfbips3TrccZshUVrtXyTumAfpPoPctrkUkOY27BkRa5V-mqx7cWW3Q9eZytV_7Pvnpjzy8tKuVMWSyk7VfeC4vwgHwfLl6agCF6in5n1Q-7JKu2j6hn3UCIGuVYAUREB2zwvhB6KouGqy6atTlCILNKdhv7qMsgMEmVg8yjMtX9TNw26JI4JYh8sQqw1cKGIJojO0gU0yuqWe3E124c8F1pGTb830EAEIht0JikxFteyZo3jTU5mmML6R4JkoTzLbmAgZZWTGMF5GMC0EXVckIK2qPCg3LMxfNM0oh_EzrjGBTmlL14j_Sg2n6QIZrt93-CXEvc6ly-0o2w")
                 .enqueue(new Callback<LoginResponse>() {
                     @Override
@@ -115,7 +116,8 @@ public class AuthActivity extends BaseActivity {
                     public void onFailure(Call<LoginResponse> call, Throwable t) {
                         Toast.makeText(AuthActivity.this, t.getMessage(), Toast.LENGTH_SHORT).show();
                     }
-                });
+                });*/
+        startActivity(new Intent(AuthActivity.this, KanbanActivity.class));
     }
 
     public void register(View view) {

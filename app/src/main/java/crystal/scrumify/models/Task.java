@@ -1,5 +1,7 @@
 package crystal.scrumify.models;
 
+import crystal.scrumify.utils.ConstantUtils;
+
 public class Task {
 
     private String title;
@@ -44,5 +46,9 @@ public class Task {
 
     public void setStatus(int status) {
         this.status = status;
+    }
+
+    public boolean moveable() {
+        return status == ConstantUtils.KANBAN_TODO_FRAG_ARG || status == ConstantUtils.KANBAN_PROGRESS_FRAG_ARG;
     }
 }
