@@ -8,6 +8,7 @@ public class User {
     private String email_verified_at;
     private String created_at;
     private String updated_at;
+    private String token;
 
     public User() {
     }
@@ -58,5 +59,13 @@ public class User {
 
     public void setUpdated_at(String updated_at) {
         this.updated_at = updated_at;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
     }
 }
