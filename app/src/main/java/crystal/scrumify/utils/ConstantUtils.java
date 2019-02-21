@@ -7,4 +7,5 @@ public class ConstantUtils {
     public static final int KANBAN_PROGRESS_FRAG_ARG = 2;
     public static final int KANBAN_DONE_FRAG_ARG = 3;
 
+    public static int REQ_PERMISSION = 10;
 }

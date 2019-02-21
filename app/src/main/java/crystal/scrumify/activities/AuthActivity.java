@@ -14,9 +14,12 @@ import crystal.scrumify.models.ApiResponse;
 import crystal.scrumify.models.LoginResponse;
 import crystal.scrumify.models.User;
 import crystal.scrumify.services.ApiService;
+import crystal.scrumify.utils.PermissionUtils;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+
+import static crystal.scrumify.utils.PermissionUtils.isPermissionGranted;
 
 public class AuthActivity extends BaseActivity {
 
@@ -74,6 +77,12 @@ public class AuthActivity extends BaseActivity {
         email = emailInput.getText().toString().trim();
         password = passwordInput.getText().toString().trim();
         confirm = confirmInput.getText().toString().trim();
+
+
+        if (!isPermissionGranted(this, this,
+                PermissionUtils.allPermissions)) {
+            if (getIntent() == null) finish();
+        }
     }
 
     @Override
