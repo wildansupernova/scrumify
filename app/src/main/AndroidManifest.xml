@@ -16,14 +16,13 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".activities.AuthActivity"
-            android:theme="@style/AppTheme.NoActionBar" >
+            android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".activities.KanbanActivity"
             android:label="@string/title_activity_home"
@@ -43,15 +42,14 @@
         <activity
             android:name=".activities.CommentActivity"
             android:theme="@style/Theme.AppCompat.Light" />
-
-        <activity android:name=".activities.BurtdownChartActivity">
-
-        </activity>
+        <activity android:name=".activities.BurtdownChartActivity"></activity>
 
         <receiver
             android:name=".receivers.BurtdownChartReceiver"
             android:enabled="true"
-            android:exported="true"></receiver>
+            android:exported="true" />
+
+        <activity android:name=".activities.GroupDetailActivity"></activity>
     </application>
 
 </manifest>

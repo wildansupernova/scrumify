@@ -1,20 +1,11 @@
-package crystal.scrumify.models;
+package crystal.scrumify.responses;
 
 public class ApiResponse<T> {
 
-    private int status;
     private String statusMessage;
     private T data;
 
     public ApiResponse() {
-    }
-
-    public int getStatus() {
-        return status;
-    }
-
-    public void setStatus(int status) {
-        this.status = status;
     }
 
     public String getStatusMessage() {

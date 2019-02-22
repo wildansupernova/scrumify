@@ -1,9 +1,16 @@
 package crystal.scrumify.activities;
 
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AlertDialog;
+import android.support.v7.view.ContextThemeWrapper;
+import android.text.TextUtils;
+import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -12,6 +19,11 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.EditText;
+import android.widget.Spinner;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +31,14 @@ import java.util.List;
 import crystal.scrumify.R;
 import crystal.scrumify.adapters.KanbanAdapter;
 import crystal.scrumify.fragments.KanbanColumn;
+import crystal.scrumify.responses.ApiResponse;
+import crystal.scrumify.responses.GroupListResponse;
+import crystal.scrumify.services.ApiService;
 import crystal.scrumify.utils.ConstantUtils;
+import crystal.scrumify.utils.PreferenceUtils;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class KanbanActivity extends BaseActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -32,9 +51,14 @@ public class KanbanActivity extends BaseActivity
     private NavigationView navigationView;
     private ViewPager viewPager;
     private TabLayout tabLayout;
+    private Spinner groupSpinner;
+
+    /*** Activity Data ***/
+    List<GroupListResponse> groupListResponses;
 
     public KanbanActivity() {
         super(R.layout.activity_kanban);
+        groupListResponses = new ArrayList<>();
     }
 
     @Override
@@ -42,11 +66,11 @@ public class KanbanActivity extends BaseActivity
         toolbar = findViewById(R.id.toolbar);
         drawerLayout = findViewById(R.id.drawer_layout);
         navigationView = findViewById(R.id.nav_view);
-
         actionButton = findViewById(R.id.kanban_fab);
         tabLayout = findViewById(R.id.kanban_tab_layout);
         viewPager = findViewById(R.id.kanban_view_pager);
         tabLayout = findViewById(R.id.kanban_tab_layout);
+        groupSpinner = findViewById(R.id.kanban_group_spinner);
 
         toggleButton = new ActionBarDrawerToggle(
                 this, drawerLayout, toolbar, R.string.navigation_drawer_open,
@@ -57,10 +81,13 @@ public class KanbanActivity extends BaseActivity
     public void setupView() {
         setSupportActionBar(toolbar);
         toggleButton.syncState();
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
     }
 
     @Override
     public void bindData() {
+
+        /*** Setup Kanban Column ***/
         List<KanbanColumn> kanbanColumns = new ArrayList<>();
         kanbanColumns.add(KanbanColumn.newInstance(ConstantUtils.KANBAN_BACKLOG_FRAG_ARG));
         kanbanColumns.add(KanbanColumn.newInstance(ConstantUtils.KANBAN_TODO_FRAG_ARG));
@@ -68,12 +95,45 @@ public class KanbanActivity extends BaseActivity
         kanbanColumns.add(KanbanColumn.newInstance(ConstantUtils.KANBAN_DONE_FRAG_ARG));
 
         for (KanbanColumn column : kanbanColumns) {
-            System.out.println(String.valueOf(column.getFragmentArg()) + "::" + column.getColumnTitle());
             tabLayout.addTab(tabLayout.newTab().setText(column.getColumnTitle()));
         }
 
         KanbanAdapter adapter = new KanbanAdapter(getSupportFragmentManager(), kanbanColumns);
         viewPager.setAdapter(adapter);
+
+        /*** Setup Group Spinner ***/
+        System.out.println(PreferenceUtils.getUserId(this));
+        ApiService.getApi().getUserGroups(PreferenceUtils.getUserId(this)).enqueue(
+                new Callback<ApiResponse<List<GroupListResponse>>>() {
+                    @Override
+                    public void onResponse(Call<ApiResponse<List<GroupListResponse>>> call, Response<ApiResponse<List<GroupListResponse>>> response) {
+                        if (response.isSuccessful()) {
+                            groupListResponses = response.body().getData();
+                            List<String> groupNames = new ArrayList<>();
+
+                            for (GroupListResponse group : groupListResponses) {
+                                groupNames.add(group.getGroupName());
+                            }
+
+                            groupNames.add("+ New Group");
+
+                            ArrayAdapter<String> adapter = new ArrayAdapter<>(getApplicationContext()
+                                    , R.layout.spinner_title_item, groupNames);
+
+                            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                            groupSpinner.setAdapter(adapter);
+
+                        } else {
+                            Toast.makeText(KanbanActivity.this, response.message(), Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<ApiResponse<List<GroupListResponse>>> call, Throwable t) {
+                        Log.d(KanbanActivity.class.getSimpleName(), t.getMessage());
+                    }
+                }
+        );
     }
 
     @Override
@@ -83,6 +143,7 @@ public class KanbanActivity extends BaseActivity
         navigationView.setNavigationItemSelectedListener(this);
         viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
         tabLayout.addOnTabSelectedListener(tabSelectedListener);
+        groupSpinner.setOnItemSelectedListener(spinnerSelectedListener);
     }
 
     @Override
@@ -165,13 +226,62 @@ public class KanbanActivity extends BaseActivity
         }
 
         @Override
-        public void onTabUnselected(TabLayout.Tab tab) {
+        public void onTabUnselected(TabLayout.Tab tab) { }
 
+        @Override
+        public void onTabReselected(TabLayout.Tab tab) { }
+    };
+
+    private Spinner.OnItemSelectedListener spinnerSelectedListener = new Spinner.OnItemSelectedListener() {
+        @Override
+        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+            if (position == groupListResponses.size()) {
+                View inflater = getLayoutInflater().inflate(R.layout.form_new_group, null);
+                final EditText groupNameInput = inflater.findViewById(R.id.form_group_name);
+                final EditText groupDescInput = inflater.findViewById(R.id.form_group_desc);
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(KanbanActivity.this);
+                builder.setTitle("Create New Group")
+                        .setView(inflater)
+                        .setPositiveButton("Create", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                String groupName = groupNameInput.getText().toString().trim();
+                                String groupDesc = groupDescInput.getText().toString().trim();
+                                createNewGroup(groupName, groupDesc);
+                            }
+                        })
+                        .setNegativeButton("Cancel", null)
+                        .create()
+                        .show();
+            } else {
+
+            }
         }
 
         @Override
-        public void onTabReselected(TabLayout.Tab tab) {
+        public void onNothingSelected(AdapterView<?> parent) {
 
         }
     };
+
+    private void createNewGroup(String groupName, String groupDesc) {
+        ApiService.getApi().createGroup(groupName, groupDesc, PreferenceUtils.getUserId(this))
+                .enqueue(new Callback<ApiResponse<String>>() {
+                    @Override
+                    public void onResponse(Call<ApiResponse<String>> call, Response<ApiResponse<String>> response) {
+                        if (response.isSuccessful()) {
+                            startActivity(new Intent(KanbanActivity.this, GroupDetailActivity.class));
+                        } else {
+                            Toast.makeText(KanbanActivity.this, response.message(), Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<ApiResponse<String>> call, Throwable t) {
+                        Log.d(KanbanActivity.class.getSimpleName(), t.getMessage());
+                    }
+                });
+
+    }
 }

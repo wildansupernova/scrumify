@@ -1,4 +1,6 @@
-package crystal.scrumify.models;
+package crystal.scrumify.responses;
+
+import crystal.scrumify.models.User;
 
 public class LoginResponse {
 

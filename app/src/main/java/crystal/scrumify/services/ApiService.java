@@ -3,14 +3,19 @@ package crystal.scrumify.services;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import crystal.scrumify.models.ApiResponse;
-import crystal.scrumify.models.LoginResponse;
+import java.util.List;
+
+import crystal.scrumify.responses.ApiResponse;
+import crystal.scrumify.responses.GroupListResponse;
+import crystal.scrumify.responses.LoginResponse;
 import retrofit2.Call;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
+import retrofit2.http.GET;
 import retrofit2.http.POST;
+import retrofit2.http.Path;
 
 public class ApiService {
 
@@ -33,5 +38,17 @@ public class ApiService {
                 @Field("tokenGoogle") String tokenGoogle
         );
 
+        @GET("user/{userId}/groups")
+        Call<ApiResponse<List<GroupListResponse>>> getUserGroups(
+                @Path("userId") int userId
+        );
+
+        @FormUrlEncoded
+        @POST("group")
+        Call<ApiResponse<String>> createGroup(
+                @Field("group_name") String groupName,
+                @Field("description") String groupDesc,
+                @Field("user_id") int user_id
+        );
     }
 }
