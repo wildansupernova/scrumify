@@ -65,9 +65,10 @@
             <Button
                 android:id="@+id/auth_login"
                 style="@style/normal_button"
-                android:onClick="login"
+                android:onClick="onClick"
                 android:background="@drawable/button_round"
                 android:text="@string/login" />
+            \
             <com.google.android.gms.common.SignInButton
                 android:id="@+id/sign_in_button"
                 android:layout_width="wrap_content"

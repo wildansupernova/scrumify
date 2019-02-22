@@ -20,7 +20,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-import static crystal.scrumify.utils.LogUtils.LOGE;
+//import static crystal.scrumify.utils.LogUtils.LOGE;
 
 public class PdfCreator {
 
@@ -107,7 +107,7 @@ public class PdfCreator {
             FileUtils.openFile(mContext, new File(destFile));
 
         } catch (IOException | DocumentException ie) {
-            LOGE("createPdf: Error " + ie.getLocalizedMessage());
+//            LOGE("createPdf: Error " + ie.getLocalizedMessage());
         } catch (ActivityNotFoundException ae) {
             Toast.makeText(mContext, "No application found to open this file.", Toast.LENGTH_SHORT).show();
         }

@@ -129,6 +129,10 @@ public class AuthActivity extends BaseActivity implements View.OnClickListener {
             case R.id.sign_in_button:
                 login();
                 break;
+            case R.id.auth_login:
+                startActivity(new Intent(AuthActivity.this, KanbanActivity.class));
+                Log.d(TAG,"MASUK");
+                break;
             // ...
         }
     }
@@ -167,11 +171,6 @@ public class AuthActivity extends BaseActivity implements View.OnClickListener {
         } catch (ApiException e) {
             // The ApiException status code indicates the detailed failure reason.
             // Please refer to the GoogleSignInStatusCodes class reference for more info
-//            Log.d(TAG,"gagal");
-//            Log.d(TAG,"gagal");
-//            Log.d(TAG,"gagal");
-//            Log.d(TAG,"gagal");
-//            Log.d(TAG,"gagal");
 
             Log.w(TAG, "signInResult:failed code=" + e.getStatusCode());
             serverLogin(null);
@@ -188,12 +187,20 @@ public class AuthActivity extends BaseActivity implements View.OnClickListener {
                             Log.d(TAG,"berhasil");
                             Log.d(TAG,"berhasil");
                             Log.d(TAG,"berhasil");
+                            try {
+                                Log.d(TAG, response.raw().body().string());
+                            } catch (Exception e) {
+                                Log.d(TAG, e.toString());
+                            }
                             Log.d(TAG,"berhasil");
-                            Log.d(TAG,response.body().toString());
+                            Log.d(TAG,"berhasil");
+                            Log.d(TAG,"berhasil");
+
+
+
                             if (response.isSuccessful()) {
                                 User user = response.body().getData();
                                 String email = user.getEmail();
-                                Log.d(TAG,user.getEmail());
                                 String nameUser = user.getName();
                                 String token = user.getToken();
                                 int userId = user.getId();
@@ -202,7 +209,6 @@ public class AuthActivity extends BaseActivity implements View.OnClickListener {
                                 PreferenceUtils.setName(AuthActivity.this,nameUser);
                                 PreferenceUtils.setToken(AuthActivity.this,token);
                                 PreferenceUtils.setUserId(AuthActivity.this,userId);
-                                Log.d(TAG, email);
                                 startActivity(new Intent(AuthActivity.this, KanbanActivity.class));
                             }
                         }
