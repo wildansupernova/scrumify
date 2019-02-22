@@ -2,12 +2,23 @@ package crystal.scrumify.activities;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.SignInButton;
+import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.tasks.Task;
 
 import crystal.scrumify.R;
 import crystal.scrumify.models.ApiResponse;
@@ -19,9 +30,11 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import crystal.scrumify.utils.PreferenceUtils;
+
 import static crystal.scrumify.utils.PermissionUtils.isPermissionGranted;
 
-public class AuthActivity extends BaseActivity {
+public class AuthActivity extends BaseActivity implements View.OnClickListener {
 
     /*** XML View Component ***/
     private EditText nameInput;
@@ -31,7 +44,8 @@ public class AuthActivity extends BaseActivity {
     private Button loginButton;
     private Button registerButton;
     private TextView switchText;
-
+    private static final int RC_SIGN_IN = 9001;
+    private static final String TAG = "AuthActivity";
     /*** Activity Data ***/
     private String name;
     private String email;
@@ -39,6 +53,8 @@ public class AuthActivity extends BaseActivity {
     private String confirm;
     private boolean isLoginState = true;
 
+    private GoogleSignInClient mGoogleSignInClient;
+    private SignInButton mSignInButton;
     public AuthActivity() {
         super(R.layout.activity_auth);
     }
@@ -72,6 +88,18 @@ public class AuthActivity extends BaseActivity {
     }
 
     @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestEmail()
+                .requestIdToken("985205803004-qrt67dtq0ad9spdci4ql8ulakv2nlap2.apps.googleusercontent.com")
+                .build();
+        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
+        mSignInButton = findViewById(R.id.sign_in_button);
+        findViewById(R.id.sign_in_button).setOnClickListener(this);
+    }
+
+    @Override
     public void bindData() {
         name = nameInput.getText().toString().trim();
         email = emailInput.getText().toString().trim();
@@ -95,30 +123,104 @@ public class AuthActivity extends BaseActivity {
 
     }
 
-    public void login(View view) {
-        /*
-        ApiService.getApi().login("eyJhbGciOiJSUzI1NiIsImtpZCI6IjdkNjgwZDhjNzBkNDRlOTQ3MTMzY2JkNDk5ZWJjMWE2MWMzZDVhYmMiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJhY2NvdW50cy5nb29nbGUuY29tIiwiYXpwIjoiNTUwMDQzOTE0OTcyLTAxcWwwYnNiMjlsZnUxdnV0ZGtsajFyYWQzcDFlb2lmLmFwcHMuZ29vZ2xldXNlcmNvbnRlbnQuY29tIiwiYXVkIjoiNTUwMDQzOTE0OTcyLTAxcWwwYnNiMjlsZnUxdnV0ZGtsajFyYWQzcDFlb2lmLmFwcHMuZ29vZ2xldXNlcmNvbnRlbnQuY29tIiwic3ViIjoiMTExOTkwNDk5ODI5NDQyNzMyNzM5IiwiZW1haWwiOiJhbG5hdGFyYXdAZ21haWwuY29tIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsImF0X2hhc2giOiJ2V2JTRFAxN25VZ3JoOEFiNXhldm5BIiwibmFtZSI6IldpbGRhbiBEaWNreSBBbG5hdGFyYSIsInBpY3R1cmUiOiJodHRwczovL2xoNS5nb29nbGV1c2VyY29udGVudC5jb20vLW5HU29FZ2s4QzFjL0FBQUFBQUFBQUFJL0FBQUFBQUFBQWtVL1RlV2RrTC1UYllVL3M5Ni1jL3Bob3RvLmpwZyIsImdpdmVuX25hbWUiOiJXaWxkYW4gRGlja3kiLCJmYW1pbHlfbmFtZSI6IkFsbmF0YXJhIiwibG9jYWxlIjoiZW4iLCJpYXQiOjE1NTA3Mjc4MjgsImV4cCI6MTU1MDczMTQyOCwianRpIjoiNjk3ZTQxY2I2NmZlY2MxOWQzYzQ2ZGYzNmU4ZTEwMmU1NmQ5NzY4OSJ9.bRH4ZCmfbips3TrccZshUVrtXyTumAfpPoPctrkUkOY27BkRa5V-mqx7cWW3Q9eZytV_7Pvnpjzy8tKuVMWSyk7VfeC4vwgHwfLl6agCF6in5n1Q-7JKu2j6hn3UCIGuVYAUREB2zwvhB6KouGqy6atTlCILNKdhv7qMsgMEmVg8yjMtX9TNw26JI4JYh8sQqw1cKGIJojO0gU0yuqWe3E124c8F1pGTb830EAEIht0JikxFteyZo3jTU5mmML6R4JkoTzLbmAgZZWTGMF5GMC0EXVckIK2qPCg3LMxfNM0oh_EzrjGBTmlL14j_Sg2n6QIZrt93-CXEvc6ly-0o2w")
-                .enqueue(new Callback<LoginResponse>() {
-                    @Override
-                    public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
-                        if (response.isSuccessful()) {
-                            User user = response.body().getUser();
-                            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(AuthActivity.this);
-                            SharedPreferences.Editor editor = preferences.edit();
-                            editor.putString("token", response.body().getToken());
-                            editor.apply();
-                            System.out.println(user.getEmail());
-                            startActivity(new Intent(AuthActivity.this, KanbanActivity.class));
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(Call<LoginResponse> call, Throwable t) {
-                        Toast.makeText(AuthActivity.this, t.getMessage(), Toast.LENGTH_SHORT).show();
-                    }
-                });*/
-        startActivity(new Intent(AuthActivity.this, KanbanActivity.class));
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.sign_in_button:
+                login();
+                break;
+            // ...
+        }
     }
+
+    public void login() {
+        Intent signInIntent = mGoogleSignInClient.getSignInIntent();
+        startActivityForResult(signInIntent, RC_SIGN_IN);
+        Log.d(TAG,"MASUK");
+    }
+
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        Log.d(TAG,"MASUKResult");
+        // Result returned from launching the Intent from GoogleSignInClient.getSignInIntent(...);
+        if (requestCode == RC_SIGN_IN) {
+            // The Task returned from this call is always completed, no need to attach
+            // a listener.
+            Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
+            handleSignInResult(task);
+        }
+    }
+
+    private void handleSignInResult(Task<GoogleSignInAccount> completedTask) {
+        try {
+            GoogleSignInAccount account = completedTask.getResult(ApiException.class);
+
+            // Signed in successfully, show authenticated UI.
+            Log.d(TAG,account.getEmail());
+            Log.d(TAG,account.getIdToken());
+
+
+
+            serverLogin(account.getIdToken());
+        } catch (ApiException e) {
+            // The ApiException status code indicates the detailed failure reason.
+            // Please refer to the GoogleSignInStatusCodes class reference for more info
+//            Log.d(TAG,"gagal");
+//            Log.d(TAG,"gagal");
+//            Log.d(TAG,"gagal");
+//            Log.d(TAG,"gagal");
+//            Log.d(TAG,"gagal");
+
+            Log.w(TAG, "signInResult:failed code=" + e.getStatusCode());
+            serverLogin(null);
+        }
+    }
+
+
+    private void serverLogin (String tokenGoogle) {
+        if (tokenGoogle != null) {
+            ApiService.getApi().login(tokenGoogle)
+                    .enqueue(new Callback<LoginResponse>() {
+                        @Override
+                        public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
+                            Log.d(TAG,"berhasil");
+                            Log.d(TAG,"berhasil");
+                            Log.d(TAG,"berhasil");
+                            Log.d(TAG,"berhasil");
+                            Log.d(TAG,response.body().toString());
+                            if (response.isSuccessful()) {
+                                User user = response.body().getData();
+                                String email = user.getEmail();
+                                Log.d(TAG,user.getEmail());
+                                String nameUser = user.getName();
+                                String token = user.getToken();
+                                int userId = user.getId();
+                                PreferenceUtils.setEmail(AuthActivity.this,email);
+                                PreferenceUtils.setLogin(AuthActivity.this,true);
+                                PreferenceUtils.setName(AuthActivity.this,nameUser);
+                                PreferenceUtils.setToken(AuthActivity.this,token);
+                                PreferenceUtils.setUserId(AuthActivity.this,userId);
+                                Log.d(TAG, email);
+                                startActivity(new Intent(AuthActivity.this, KanbanActivity.class));
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<LoginResponse> call, Throwable t) {
+                            Log.d(TAG,"gagal");
+                            Log.d(TAG,"gagal");
+                            Log.d(TAG,"gagal");
+                            Log.d(TAG,"gagal");
+                            Log.d(TAG,"gagal");
+                            Toast.makeText(AuthActivity.this, t.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    });
+        }
+    }
+
+
 
     public void register(View view) {
         startActivity(new Intent(this, KanbanActivity.class));

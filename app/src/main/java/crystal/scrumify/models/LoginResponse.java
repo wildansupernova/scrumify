@@ -2,25 +2,25 @@ package crystal.scrumify.models;
 
 public class LoginResponse {
 
-    private User user;
-    private String token;
+    private User data;
+    private String statusMessage;
 
     public LoginResponse() {
     }
 
-    public User getUser() {
-        return user;
+    public User getData() {
+        return data;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setData(User data) {
+        this.data = data;
     }
 
-    public String getToken() {
-        return token;
+    public String getStatusMessage() {
+        return statusMessage;
     }
 
-    public void setToken(String token) {
-        this.token = token;
+    public void setStatusMessage(String statusMessage) {
+        this.statusMessage = statusMessage;
     }
 }

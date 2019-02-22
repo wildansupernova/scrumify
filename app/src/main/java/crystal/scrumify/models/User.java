@@ -2,21 +2,22 @@ package crystal.scrumify.models;
 
 public class User {
 
-    private String id;
+    private int id;
     private String name;
     private String email;
     private String email_verified_at;
     private String created_at;
     private String updated_at;
+    private String token;
 
     public User() {
     }
 
-    public String getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(int id) {
         this.id = id;
     }
 
@@ -58,5 +59,13 @@ public class User {
 
     public void setUpdated_at(String updated_at) {
         this.updated_at = updated_at;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
     }
 }

@@ -68,6 +68,10 @@
                 android:onClick="login"
                 android:background="@drawable/button_round"
                 android:text="@string/login" />
+            <com.google.android.gms.common.SignInButton
+                android:id="@+id/sign_in_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
 
             <Button
                 android:id="@+id/auth_register"
