@@ -14,11 +14,10 @@ import retrofit2.http.POST;
 
 public class ApiService {
 
-    // TODO: add base URL
-    public static final String BASE_URL = "https://scrumify-server.herokuapp.com/api/";
+    public static final String BASE_URL = "http://192.168.0.139:8000/api/";
 
     public static Api getApi() {
-        Gson gson = new GsonBuilder().setLenient().create(); //accept malformed json
+        Gson gson = new GsonBuilder().setLenient().create();
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create(gson))
@@ -28,7 +27,6 @@ public class ApiService {
     }
 
     public interface Api {
-
         @FormUrlEncoded
         @POST("login")
         Call<LoginResponse> login(

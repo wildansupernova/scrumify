@@ -16,7 +16,14 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".activities.AuthActivity"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme.NoActionBar" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
         <activity
             android:name=".activities.KanbanActivity"
             android:label="@string/title_activity_home"
@@ -38,11 +45,7 @@
             android:theme="@style/Theme.AppCompat.Light" />
 
         <activity android:name=".activities.BurtdownChartActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
 
         <receiver

@@ -8,6 +8,7 @@ public class ConstantUtils {
     public static final int KANBAN_DONE_FRAG_ARG = 3;
 
     public static final int BURTDOWN_CODE = 100;
+    public static final int RC_SIGN_IN = 9001;
 
     public static int REQ_PERMISSION = 10;
 
