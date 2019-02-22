@@ -2,6 +2,7 @@ package crystal.scrumify.utils;
 
 import android.content.ActivityNotFoundException;
 import android.content.Context;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.itextpdf.text.BaseColor;
@@ -20,10 +21,10 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-import static crystal.scrumify.utils.LogUtils.LOGE;
-
 public class PdfCreator {
 
+    public static final String TAG = PdfCreator.class.getSimpleName();
+    
     public static void createPdf(String destFile, Context mContext, String dateNotulen, String notulen) {
 
         if (new File(destFile).exists()) {
@@ -107,7 +108,7 @@ public class PdfCreator {
             FileUtils.openFile(mContext, new File(destFile));
 
         } catch (IOException | DocumentException ie) {
-            LOGE("createPdf: Error " + ie.getLocalizedMessage());
+            Log.e(TAG,"createPdf: Error " + ie.getLocalizedMessage());
         } catch (ActivityNotFoundException ae) {
             Toast.makeText(mContext, "No application found to open this file.", Toast.LENGTH_SHORT).show();
         }
