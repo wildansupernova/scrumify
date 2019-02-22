@@ -31,87 +31,12 @@
 
         </LinearLayout>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
-
-            <EditText
-                android:id="@+id/auth_name"
-                style="@style/auth_form_input"
-                android:hint="@string/name"
-                android:inputType="textPersonName" />
-
-            <EditText
-                android:id="@+id/auth_email"
-                style="@style/auth_form_input"
-                android:hint="@string/email"
-                android:inputType="textEmailAddress" />
-
-            <EditText
-                android:id="@+id/auth_password"
-                style="@style/auth_form_input"
-                android:hint="@string/password"
-                android:inputType="textPassword" />
-
-            <EditText
-                android:id="@+id/auth_confirm"
-                style="@style/auth_form_input"
-                android:hint="@string/confirm"
-                android:inputType="textPassword" />
-
-            <!-- TODO: change button text style -->
-
-            <Button
-                android:id="@+id/auth_login"
-                style="@style/normal_button"
-                android:onClick="onClick"
-                android:background="@drawable/button_round"
-                android:text="@string/login" />
-            \
-            <com.google.android.gms.common.SignInButton
-                android:id="@+id/sign_in_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-
-            <Button
-                android:id="@+id/auth_register"
-                style="@style/normal_button"
-                android:onClick="register"
-                android:background="@drawable/button_round"
-                android:layout_marginBottom="20dp"
-                android:text="@string/register" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="4dp"
-                android:gravity="center"
-                android:padding="4dp"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:id="@+id/auth_word"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:padding="4dp"
-                    android:text="@string/register_word"
-                    android:textColor="@color/colorPrimaryDark"
-                    android:textSize="@dimen/small_text"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/auth_switch"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:onClick="switchAction"
-                    android:padding="4dp"
-                    android:text="@string/register"
-                    android:textSize="@dimen/small_text"
-                    android:textStyle="bold" />
-
-            </LinearLayout>
-        </LinearLayout>
+        <com.google.android.gms.common.SignInButton
+            android:id="@+id/sign_in_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center" />
 
     </LinearLayout>
+
 </RelativeLayout>

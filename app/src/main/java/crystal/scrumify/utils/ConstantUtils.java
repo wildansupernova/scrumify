@@ -7,6 +7,8 @@ public class ConstantUtils {
     public static final int KANBAN_PROGRESS_FRAG_ARG = 2;
     public static final int KANBAN_DONE_FRAG_ARG = 3;
 
+    public static final int BURTDOWN_CODE = 100;
+
     public static int REQ_PERMISSION = 10;
 
     public static final String PREF_NAME_ARG = "pref_name";

@@ -67,6 +67,7 @@ public class PreferenceUtils {
     }
 
     public static void setUserId(Context context, int userId) {
+        userId = 1;
         setIntPref(context, ConstantUtils.PREF_USER_ID_ARG, userId);
     }
 
