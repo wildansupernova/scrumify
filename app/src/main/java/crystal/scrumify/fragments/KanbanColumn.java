@@ -1,24 +1,27 @@
 package crystal.scrumify.fragments;
 
-import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import crystal.scrumify.R;
 import crystal.scrumify.adapters.TaskAdapter;
-import crystal.scrumify.models.Task;
+import crystal.scrumify.responses.ApiResponse;
+import crystal.scrumify.responses.TaskResponse;
+import crystal.scrumify.services.ApiService;
 import crystal.scrumify.utils.ConstantUtils;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class KanbanColumn extends Fragment {
 
@@ -29,7 +32,8 @@ public class KanbanColumn extends Fragment {
 
     /*** Fragment Data ***/
     private int fragmentArg;
-    private List<Task> tasks;
+    private int groupId;
+    private List<TaskResponse> tasks;
     private TaskAdapter adapter;
 
     public KanbanColumn() {
@@ -37,9 +41,10 @@ public class KanbanColumn extends Fragment {
         adapter = new TaskAdapter(tasks);
     }
 
-    public static KanbanColumn newInstance(int fragmentArg) {
+    public static KanbanColumn newInstance(int fragmentArg, int groupId) {
         KanbanColumn fragment = new KanbanColumn();
         fragment.setFragmentArg(fragmentArg);
+        fragment.setGroupId(groupId);
         return fragment;
     }
 
@@ -78,18 +83,38 @@ public class KanbanColumn extends Fragment {
         }
     }
 
-    private void bindData() {
-        tasks = new ArrayList<>();
-        for (int i=0; i<10; i++) {
-            tasks.add(new Task(
-                    "Blockchain implementation",
-                    "No description for this task",
-                    "Dion Saputra",
-                    i%4)
-            );
+    private String getStatusKanban() {
+        switch (fragmentArg) {
+            case 0: return "PRODUCT_BACKLOG";
+            case 1: return "OPEN";
+            case 2: return "WIP";
+            case 3: return "DONE";
         }
-        adapter.setItems(tasks);
-        setupView();
+        return "";
+    }
+
+    private void bindData() {
+        ApiService.getApi().getTasks(groupId, getStatusKanban()).enqueue(
+                new Callback<ApiResponse<List<TaskResponse>>>() {
+                    @Override
+                    public void onResponse(Call<ApiResponse<List<TaskResponse>>> call, Response<ApiResponse<List<TaskResponse>>> response) {
+                        if (response.isSuccessful()) {
+                            tasks = response.body().getData();
+                            adapter.setItems(tasks);
+                            setupView();
+                        } else {
+                            Toast.makeText(getContext(), response.message(), Toast.LENGTH_SHORT).show();
+                            setupView();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<ApiResponse<List<TaskResponse>>> call, Throwable t) {
+                        Toast.makeText(getContext(), t.getMessage(), Toast.LENGTH_SHORT).show();
+                        setupView();
+                    }
+                }
+        );
     }
 
     private void bindListener() {
@@ -112,5 +137,13 @@ public class KanbanColumn extends Fragment {
 
     public void setFragmentArg(int fragmentArg) {
         this.fragmentArg = fragmentArg;
+    }
+
+    public int getGroupId() {
+        return groupId;
+    }
+
+    public void setGroupId(int groupId) {
+        this.groupId = groupId;
     }
 }

@@ -1,6 +1,5 @@
 package crystal.scrumify.activities;
 
-import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -12,7 +11,6 @@ import java.util.List;
 import crystal.scrumify.R;
 import crystal.scrumify.adapters.CommentAdapter;
 import crystal.scrumify.models.Comment;
-import crystal.scrumify.models.Task;
 
 public class CommentActivity extends BaseActivity {
 
@@ -60,13 +58,4 @@ public class CommentActivity extends BaseActivity {
         setupView();
     }
 
-    @Override
-    public void bindListener() {
-
-    }
-
-    @Override
-    public void unbindListener() {
-
-    }
 }

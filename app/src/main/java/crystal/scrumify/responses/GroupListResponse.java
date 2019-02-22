@@ -17,7 +17,7 @@ public class GroupListResponse {
     private String updatedAt;
 
     @SerializedName("group_id")
-    private String groupId;
+    private int groupId;
 
     @SerializedName("group_name")
     private String groupName;
@@ -57,11 +57,11 @@ public class GroupListResponse {
         this.updatedAt = updatedAt;
     }
 
-    public String getGroupId() {
+    public int getGroupId() {
         return groupId;
     }
 
-    public void setGroupId(String groupId) {
+    public void setGroupId(int groupId) {
         this.groupId = groupId;
     }
 

@@ -6,7 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 
-public abstract class BaseActivity extends AppCompatActivity {
+public class BaseActivity extends AppCompatActivity {
 
     protected int layout;
 
@@ -31,14 +31,14 @@ public abstract class BaseActivity extends AppCompatActivity {
         unbindListener();
     }
 
-    public abstract void bindView();
+    public void bindView() {}
 
-    public abstract void setupView();
+    public void setupView() {}
 
-    public abstract void bindData();
+    public void bindData() {}
 
-    public abstract void bindListener();
+    public void bindListener() {}
 
-    public abstract void unbindListener();
+    public void unbindListener() {}
 
 }

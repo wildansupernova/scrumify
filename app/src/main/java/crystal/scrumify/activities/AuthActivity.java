@@ -45,16 +45,6 @@ public class AuthActivity extends BaseActivity {
     }
 
     @Override
-    public void setupView() {
-
-    }
-
-    @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
-
-    @Override
     public void bindData() {
         if (!isPermissionGranted(this, this,
                 PermissionUtils.allPermissions)) {
@@ -65,11 +55,6 @@ public class AuthActivity extends BaseActivity {
     @Override
     public void bindListener() {
         signInButton.setOnClickListener(signInClickListener);
-    }
-
-    @Override
-    public void unbindListener() {
-
     }
 
     @Override

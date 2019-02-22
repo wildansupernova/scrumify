@@ -82,4 +82,5 @@ public class PreferenceUtils {
     public static boolean isLogin(Context context) {
         return getBooleanPref(context, ConstantUtils.PREF_IS_LOGIN_ARG);
     }
+
 }

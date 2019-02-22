@@ -131,21 +131,6 @@ public class BurtdownChartActivity extends BaseActivity {
         cartesian.xAxis(0).labels().padding(5d, 5d, 5d, 5d);
     }
 
-    @Override
-    public void bindData() {
-
-    }
-
-    @Override
-    public void bindListener() {
-
-    }
-
-    @Override
-    public void unbindListener() {
-
-    }
-
     public void addData(int y) {
         seriesData.add(new CustomDataEntry(String.valueOf(counter), y+1, y+2, y+3));
         counter++;

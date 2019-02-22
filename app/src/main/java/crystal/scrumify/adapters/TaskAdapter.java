@@ -15,15 +15,15 @@ import java.util.List;
 
 import crystal.scrumify.R;
 import crystal.scrumify.activities.CommentActivity;
-import crystal.scrumify.models.Task;
+import crystal.scrumify.responses.TaskResponse;
 
 
 public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskHolder> {
 
-    private List<Task> items = new ArrayList<>();
+    private List<TaskResponse> items = new ArrayList<>();
     private int itemLayout = R.layout.item_task;
 
-    public TaskAdapter(List<Task> items) {
+    public TaskAdapter(List<TaskResponse> items) {
         this.items = items;
     }
 
@@ -37,7 +37,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskHolder> {
         holder.bind(items.get(position));
     }
 
-    public void setItems(List<Task> items) {
+    public void setItems(List<TaskResponse> items) {
         this.items = items;
         notifyDataSetChanged();
     }
@@ -92,16 +92,15 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskHolder> {
             move.setOnClickListener(moveClickListener);
         }
 
-        public void bind(Task item) {
+        public void bind(TaskResponse item) {
             if (!item.moveable()) {
                 move.setVisibility(View.GONE);
             }
 
-            title.setText(item.getTitle());
+            title.setText(item.getTaskName());
             description.setText(item.getDescription());
             assignee.setText("Assigned to: " + item.getAssignee());
         }
-
 
     }
 }

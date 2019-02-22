@@ -49,7 +49,7 @@
             android:enabled="true"
             android:exported="true" />
 
-        <activity android:name=".activities.GroupDetailActivity"></activity>
+        <activity android:name=".activities.InviteMemberActivity"></activity>
     </application>
 
 </manifest>

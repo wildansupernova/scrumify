@@ -7,10 +7,7 @@ import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.view.ContextThemeWrapper;
-import android.text.TextUtils;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -86,23 +83,7 @@ public class KanbanActivity extends BaseActivity
 
     @Override
     public void bindData() {
-
-        /*** Setup Kanban Column ***/
-        List<KanbanColumn> kanbanColumns = new ArrayList<>();
-        kanbanColumns.add(KanbanColumn.newInstance(ConstantUtils.KANBAN_BACKLOG_FRAG_ARG));
-        kanbanColumns.add(KanbanColumn.newInstance(ConstantUtils.KANBAN_TODO_FRAG_ARG));
-        kanbanColumns.add(KanbanColumn.newInstance(ConstantUtils.KANBAN_PROGRESS_FRAG_ARG));
-        kanbanColumns.add(KanbanColumn.newInstance(ConstantUtils.KANBAN_DONE_FRAG_ARG));
-
-        for (KanbanColumn column : kanbanColumns) {
-            tabLayout.addTab(tabLayout.newTab().setText(column.getColumnTitle()));
-        }
-
-        KanbanAdapter adapter = new KanbanAdapter(getSupportFragmentManager(), kanbanColumns);
-        viewPager.setAdapter(adapter);
-
         /*** Setup Group Spinner ***/
-        System.out.println(PreferenceUtils.getUserId(this));
         ApiService.getApi().getUserGroups(PreferenceUtils.getUserId(this)).enqueue(
                 new Callback<ApiResponse<List<GroupListResponse>>>() {
                     @Override
@@ -136,6 +117,23 @@ public class KanbanActivity extends BaseActivity
         );
     }
 
+    private void setupKanbanColumn(int groupId) {
+        List<KanbanColumn> kanbanColumns = new ArrayList<>();
+        kanbanColumns.add(KanbanColumn.newInstance(ConstantUtils.KANBAN_BACKLOG_FRAG_ARG, groupId));
+        kanbanColumns.add(KanbanColumn.newInstance(ConstantUtils.KANBAN_TODO_FRAG_ARG, groupId));
+        kanbanColumns.add(KanbanColumn.newInstance(ConstantUtils.KANBAN_PROGRESS_FRAG_ARG, groupId));
+        kanbanColumns.add(KanbanColumn.newInstance(ConstantUtils.KANBAN_DONE_FRAG_ARG, groupId));
+
+        if (tabLayout.getTabCount() == 0) {
+            for (KanbanColumn column : kanbanColumns) {
+                tabLayout.addTab(tabLayout.newTab().setText(column.getColumnTitle()));
+            }
+        }
+
+        KanbanAdapter adapter = new KanbanAdapter(getSupportFragmentManager(), kanbanColumns);
+        viewPager.setAdapter(adapter);
+    }
+
     @Override
     public void bindListener() {
         actionButton.setOnClickListener(actionButtonListener);
@@ -144,11 +142,6 @@ public class KanbanActivity extends BaseActivity
         viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
         tabLayout.addOnTabSelectedListener(tabSelectedListener);
         groupSpinner.setOnItemSelectedListener(spinnerSelectedListener);
-    }
-
-    @Override
-    public void unbindListener() {
-
     }
 
     @Override
@@ -255,13 +248,13 @@ public class KanbanActivity extends BaseActivity
                         .create()
                         .show();
             } else {
-
+                setupKanbanColumn(groupListResponses.get(position).getGroupId());
             }
         }
 
         @Override
         public void onNothingSelected(AdapterView<?> parent) {
-
+            setupKanbanColumn(groupListResponses.get(0).getGroupId());
         }
     };
 
@@ -271,9 +264,9 @@ public class KanbanActivity extends BaseActivity
                     @Override
                     public void onResponse(Call<ApiResponse<String>> call, Response<ApiResponse<String>> response) {
                         if (response.isSuccessful()) {
-                            startActivity(new Intent(KanbanActivity.this, GroupDetailActivity.class));
+                            startActivity(new Intent(KanbanActivity.this, InviteMemberActivity.class));
                         } else {
-                            Toast.makeText(KanbanActivity.this, response.message(), Toast.LENGTH_SHORT).show();
+
                         }
                     }
 
@@ -282,6 +275,5 @@ public class KanbanActivity extends BaseActivity
                         Log.d(KanbanActivity.class.getSimpleName(), t.getMessage());
                     }
                 });
-
     }
 }

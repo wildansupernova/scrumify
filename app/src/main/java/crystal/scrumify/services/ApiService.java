@@ -8,6 +8,7 @@ import java.util.List;
 import crystal.scrumify.responses.ApiResponse;
 import crystal.scrumify.responses.GroupListResponse;
 import crystal.scrumify.responses.LoginResponse;
+import crystal.scrumify.responses.TaskResponse;
 import retrofit2.Call;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -16,6 +17,7 @@ import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
+import retrofit2.http.Query;
 
 public class ApiService {
 
@@ -49,6 +51,12 @@ public class ApiService {
                 @Field("group_name") String groupName,
                 @Field("description") String groupDesc,
                 @Field("user_id") int user_id
+        );
+
+        @GET("group/{group_id}/tasks")
+        Call<ApiResponse<List<TaskResponse>>> getTasks(
+                @Path("group_id") int groupId,
+                @Query("status_kanban") String statusKanban
         );
     }
 }
