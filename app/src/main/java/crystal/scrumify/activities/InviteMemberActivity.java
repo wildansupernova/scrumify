@@ -39,13 +39,9 @@ public class InviteMemberActivity extends BaseActivity {
     }
 
     @Override
-    public void setupView() {
-
-    }
-
-    @Override
     public void bindData() {
-
+        resultName.setText("Find your partner with email");
+        resultEmail.setText("");
     }
 
     @Override
@@ -56,26 +52,28 @@ public class InviteMemberActivity extends BaseActivity {
 
     @Override
     public void unbindListener() {
+        searchButton.setOnClickListener(null);
+        inviteButton.setOnClickListener(null);
     }
 
-    public void searchUser(String userEmail) {
+    public void searchUser(final String userEmail) {
 
         ApiService.getApi().getUser(userEmail).enqueue(new Callback<ApiResponse<User>>() {
             @Override
             public void onResponse(Call<ApiResponse<User>> call, Response<ApiResponse<User>> response) {
                 if (response.isSuccessful()) {
                     User user = response.body().getData();
-                    Log.d(InviteMemberActivity.class.getSimpleName(), "CLICKED");
 
                     resultName.setText(user.getName());
                     resultEmail.setText(user.getEmail());
+                } else {
+                    resultName.setText("Email Not Found");
+                    resultEmail.setText("");
                 }
             }
 
             @Override
             public void onFailure(Call<ApiResponse<User>> call, Throwable t) {
-                resultName.setText("Email Not Found");
-                resultEmail.setText("");
                 Log.d(InviteMemberActivity.class.getSimpleName(), t.getMessage());
             }
         });
@@ -89,14 +87,14 @@ public class InviteMemberActivity extends BaseActivity {
     private View.OnClickListener searchButtonListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            searchUser(emailInput.getText().toString());
+            searchUser(emailInput.getText().toString().trim());
         }
     };
 
     private View.OnClickListener inviteButtonListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            inviteUser(emailInput.getText().toString());
+            inviteUser(emailInput.getText().toString().trim());
         }
     };
 }
