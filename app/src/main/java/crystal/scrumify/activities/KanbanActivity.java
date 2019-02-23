@@ -3,19 +3,19 @@ package crystal.scrumify.activities;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
-import android.support.v4.view.ViewPager;
-import android.support.v7.app.AlertDialog;
-import android.util.Log;
-import android.view.View;
-import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
+import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -29,6 +29,7 @@ import java.util.List;
 import crystal.scrumify.R;
 import crystal.scrumify.adapters.KanbanAdapter;
 import crystal.scrumify.fragments.KanbanColumn;
+import crystal.scrumify.models.Group;
 import crystal.scrumify.responses.ApiResponse;
 import crystal.scrumify.responses.GroupListResponse;
 import crystal.scrumify.services.ApiService;
@@ -54,6 +55,7 @@ public class KanbanActivity extends BaseActivity
 
     /*** Activity Data ***/
     List<GroupListResponse> groupListResponses;
+    int currentPosition = 1;
 
     public KanbanActivity() {
         super(R.layout.activity_kanban);
@@ -194,9 +196,11 @@ public class KanbanActivity extends BaseActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_invite) {
-            startActivity(new Intent(KanbanActivity.this, InviteMemberActivity.class));
-        } else if (id == R.id.nav_gallery) {
-
+            Intent intent = new Intent(KanbanActivity.this, InviteMemberActivity.class);
+            intent.putExtra("groupId", groupListResponses.get(currentPosition).getGroupId());
+            startActivity(intent);
+        } else if (id == R.id.nav_record) {
+            startActivity(new Intent(KanbanActivity.this, RecordActivity.class));
         } else if (id == R.id.nav_slideshow) {
 
         } else if (id == R.id.nav_manage) {
@@ -295,21 +299,20 @@ public class KanbanActivity extends BaseActivity
 
     private void createNewGroup(String groupName, String groupDesc) {
         ApiService.getApi().createGroup(groupName, groupDesc, PreferenceUtils.getUserId(this))
-                .enqueue(new Callback<ApiResponse<String>>() {
+                .enqueue(new Callback<ApiResponse<Group>>() {
                     @Override
-                    public void onResponse(Call<ApiResponse<String>> call, Response<ApiResponse<String>> response) {
+                    public void onResponse(Call<ApiResponse<Group>> call, Response<ApiResponse<Group>> response) {
                         updateListGroupSpinner();
                         if (response.isSuccessful()) {
-                            startActivity(new Intent(KanbanActivity.this, InviteMemberActivity.class));
-                        } else {
-
+//                            Intent intent = new Intent(KanbanActivity.this, InviteMemberActivity.class);
+//                            intent.putExtra("groupId", response.body().getData().getGroupId());
+//                            startActivity(intent);
                         }
 
                     }
 
                     @Override
-                    public void onFailure(Call<ApiResponse<String>> call, Throwable t) {
-                        updateListGroupSpinner();
+                    public void onFailure(Call<ApiResponse<Group>> call, Throwable t) {
                         Log.d(KanbanActivity.class.getSimpleName(), t.getMessage());
                     }
                 });

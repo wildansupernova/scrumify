@@ -1,8 +1,5 @@
 package crystal.scrumify.activities;
 
-import android.app.AlarmManager;
-import android.app.PendingIntent;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -12,7 +9,6 @@ import android.widget.Toast;
 import com.anychart.AnyChart;
 import com.anychart.AnyChartView;
 import com.anychart.chart.common.dataentry.DataEntry;
-import com.anychart.chart.common.dataentry.ValueDataEntry;
 import com.anychart.charts.Cartesian;
 import com.anychart.core.cartesian.series.Line;
 import com.anychart.data.Mapping;
@@ -27,23 +23,22 @@ import java.util.List;
 
 import crystal.scrumify.R;
 import crystal.scrumify.models.CustomDataEntry;
-import crystal.scrumify.receivers.BurtdownChartReceiver;
-import crystal.scrumify.utils.ConstantUtils;
+import crystal.scrumify.receivers.BurndownChartReceiver;
 
-public class BurtdownChartActivity extends BaseActivity {
+public class BurndownChartActivity extends BaseActivity {
 
     private AnyChartView burdownChart;
     private Cartesian cartesian;
     List<DataEntry> seriesData = new ArrayList<>();
 
-    private static BurtdownChartActivity instance = null;
+    private static BurndownChartActivity instance = null;
     private static int counter = 1;
 
-    public BurtdownChartActivity() {
+    public BurndownChartActivity() {
         super(R.layout.activity_burdown_chart);
     }
 
-    public static BurtdownChartActivity getInstance() {
+    public static BurndownChartActivity getInstance() {
         return instance;
     }
 
@@ -112,8 +107,8 @@ public class BurtdownChartActivity extends BaseActivity {
     }
 
     public void startService(View view) {
-        BurtdownChartReceiver burtdownChartReceiver = new BurtdownChartReceiver();
-        burtdownChartReceiver.setAlarm(this);
+        BurndownChartReceiver burndownChartReceiver = new BurndownChartReceiver();
+        burndownChartReceiver.setAlarm(this);
         Toast.makeText(this, "Timer 1 menit", Toast.LENGTH_SHORT).show();
     }
 
@@ -125,7 +120,7 @@ public class BurtdownChartActivity extends BaseActivity {
                 .yLabel(true)
                 .yStroke((Stroke) null, null, null, (String) null, (String) null);
         cartesian.tooltip().positionMode(TooltipPositionMode.POINT);
-        cartesian.title("Burdown Chart");
+        cartesian.title("Burndown Chart");
         cartesian.yAxis(0).title("Left Story Points");
         cartesian.xAxis(0).title("Day");
         cartesian.xAxis(0).labels().padding(5d, 5d, 5d, 5d);
@@ -135,6 +130,6 @@ public class BurtdownChartActivity extends BaseActivity {
         seriesData.add(new CustomDataEntry(String.valueOf(counter), y+1, y+2, y+3));
         counter++;
         fillChart();
-        Log.d(BurtdownChartActivity.class.getSimpleName(), "addData " + String.valueOf(y));
+        Log.d(BurndownChartActivity.class.getSimpleName(), "addData " + String.valueOf(y));
     }
 }

@@ -5,11 +5,14 @@ import com.google.gson.GsonBuilder;
 
 import java.util.List;
 
+import crystal.scrumify.models.Group;
 import crystal.scrumify.models.User;
 import crystal.scrumify.responses.ApiResponse;
 import crystal.scrumify.responses.GroupListResponse;
 import crystal.scrumify.responses.LoginResponse;
 import crystal.scrumify.responses.TaskResponse;
+import okhttp3.OkHttpClient;
+import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Call;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -26,8 +29,11 @@ public class ApiService {
 
     public static Api getApi() {
         Gson gson = new GsonBuilder().setLenient().create();
+        HttpLoggingInterceptor loggingApi = new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY);
+        OkHttpClient.Builder builderApi = new OkHttpClient.Builder().addInterceptor(loggingApi);
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(BASE_URL)
+                .client(builderApi.build())
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .build();
 
@@ -53,7 +59,7 @@ public class ApiService {
 
         @FormUrlEncoded
         @POST("group")
-        Call<ApiResponse<String>> createGroup(
+        Call<ApiResponse<Group>> createGroup(
                 @Field("group_name") String groupName,
                 @Field("description") String groupDesc,
                 @Field("user_id") int userId

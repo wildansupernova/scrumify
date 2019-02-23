@@ -33,7 +33,7 @@ public class RecordActivity extends BaseActivity {
         recyclerView = findViewById(R.id.record_recycler);
         emptyView = findViewById(R.id.record_empty_view);
 
-        recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, true));
+        recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         recyclerView.setAdapter(adapter);
     }
 
@@ -52,7 +52,7 @@ public class RecordActivity extends BaseActivity {
     public void bindData() {
         records = new ArrayList<>();
         for (int i=0; i<10; i++) {
-            records.add(new Record("Sprint Meeting " + i, "Recorded by: Muhammad Farhan"));
+            records.add(new Record("Sprint Meeting " + String.valueOf(i), "Recorded by: Muhammad Farhan"));
         }
         adapter.setItems(records);
         setupView();
