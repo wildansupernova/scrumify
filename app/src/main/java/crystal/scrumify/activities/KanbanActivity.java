@@ -215,9 +215,7 @@ public class KanbanActivity extends BaseActivity
     private TabLayout.OnTabSelectedListener tabSelectedListener = new TabLayout.OnTabSelectedListener() {
         @Override
         public void onTabSelected(TabLayout.Tab tab) {
-            if (!(tab.getText() == "+ New Group")) {
-                viewPager.setCurrentItem(tab.getPosition(), true);
-            }
+            viewPager.setCurrentItem(tab.getPosition(), true);
         }
 
         @Override

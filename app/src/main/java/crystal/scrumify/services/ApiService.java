@@ -5,6 +5,7 @@ import com.google.gson.GsonBuilder;
 
 import java.util.List;
 
+import crystal.scrumify.models.User;
 import crystal.scrumify.responses.ApiResponse;
 import crystal.scrumify.responses.GroupListResponse;
 import crystal.scrumify.responses.LoginResponse;
@@ -38,6 +39,11 @@ public class ApiService {
         @POST("login")
         Call<LoginResponse> login(
                 @Field("tokenGoogle") String tokenGoogle
+        );
+
+        @GET("user/email/{userEmail}")
+        Call<ApiResponse<User>> getUser(
+                @Path("userEmail") String userEmail
         );
 
         @GET("user/{userId}/groups")
