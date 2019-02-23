@@ -19,12 +19,19 @@
             android:background="?attr/colorPrimary">
 
             <Spinner
-                style="@style/TextAppearance.AppCompat.Headline"
                 android:id="@+id/kanban_group_spinner"
+                style="@style/TextAppearance.AppCompat.Headline"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content" />
 
+            <Button
+                android:id="@+id/button2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Add Group" />
         </android.support.v7.widget.Toolbar>
+
+
 
     </android.support.design.widget.AppBarLayout>
 

@@ -34,7 +34,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:background="@android:color/transparent"
-                android:onClick="searchUser"
                 android:padding="16dp"
                 android:src="@drawable/ic_search_black_24dp" />
 
@@ -72,7 +71,6 @@
             android:text="Invite"
             android:textColor="@color/colorPrimary"
             android:background="@android:color/transparent"
-            android:onClick="inviteUser"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center" />

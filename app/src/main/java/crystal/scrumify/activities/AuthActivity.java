@@ -1,9 +1,12 @@
 package crystal.scrumify.activities;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -14,8 +17,15 @@ import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Task;
 
 import crystal.scrumify.R;
+import crystal.scrumify.models.User;
+import crystal.scrumify.responses.LoginResponse;
+import crystal.scrumify.services.ApiService;
 import crystal.scrumify.utils.ConstantUtils;
 import crystal.scrumify.utils.PermissionUtils;
+import crystal.scrumify.utils.PreferenceUtils;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 import static crystal.scrumify.utils.PermissionUtils.isPermissionGranted;
 
@@ -50,6 +60,11 @@ public class AuthActivity extends BaseActivity {
                 PermissionUtils.allPermissions)) {
             if (getIntent() == null) finish();
         }
+
+        if (PreferenceUtils.isLogin(AuthActivity.this)) {
+            startActivity(new Intent(AuthActivity.this, KanbanActivity.class));
+        }
+
     }
 
     @Override
@@ -69,6 +84,10 @@ public class AuthActivity extends BaseActivity {
     private void handleSignInResult(Task<GoogleSignInAccount> completedTask) {
         try {
             GoogleSignInAccount account = completedTask.getResult(ApiException.class);
+            Log.d(TAG, "berhasil");
+            Log.d(TAG, "berhasil");
+            Log.d(TAG, "berhasil");
+            Log.d(TAG, account.getIdToken());
             serverLogin(account.getIdToken());
         } catch (ApiException e) {
             serverLogin(null);
@@ -76,7 +95,10 @@ public class AuthActivity extends BaseActivity {
     }
 
     private void serverLogin (String tokenGoogle) {
-        /*
+        Log.d(TAG, "PAnggil");
+        Log.d(TAG, "PAnggil");
+        Log.d(TAG, "PAnggil");
+        Log.d(TAG, "PAnggil");
         if (tokenGoogle != null) {
             ApiService.getApi().login(tokenGoogle)
                     .enqueue(new Callback<LoginResponse>() {
@@ -84,7 +106,11 @@ public class AuthActivity extends BaseActivity {
                         public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
                             if (response.isSuccessful()) {
                                 User user = response.body().getData();
-
+                                Log.d(TAG, "wOLDAN");
+                                Log.d(TAG, "wOLDAN");
+                                Log.d(TAG, "wOLDAN");
+                                Log.d(TAG, "wOLDAN");
+                                Log.d(TAG, user.getEmail());
                                 Context context = AuthActivity.this;
                                 PreferenceUtils.setEmail(context, user.getEmail());
                                 PreferenceUtils.setLogin(context,true);
@@ -98,11 +124,15 @@ public class AuthActivity extends BaseActivity {
 
                         @Override
                         public void onFailure(Call<LoginResponse> call, Throwable t) {
+                            Log.d(TAG, "GAGAL");
+                            Log.d(TAG, "GAGAL");
+                            Log.d(TAG, "GAGAL");
+                            Log.d(TAG, "GAGAL");
                             Toast.makeText(AuthActivity.this, t.getMessage(), Toast.LENGTH_SHORT).show();
                         }
                     });
-        } */
-        startActivity(new Intent(AuthActivity.this, KanbanActivity.class));
+        }
+//        startActivity(new Intent(AuthActivity.this, KanbanActivity.class));
     }
 
     private View.OnClickListener signInClickListener = new View.OnClickListener() {

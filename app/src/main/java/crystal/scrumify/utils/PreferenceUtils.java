@@ -71,8 +71,8 @@ public class PreferenceUtils {
     }
 
     public static int getUserId(Context context) {
-        return 1;
-        //return getIntPref(context, ConstantUtils.PREF_USER_ID_ARG);
+//        return 1;
+        return getIntPref(context, ConstantUtils.PREF_USER_ID_ARG);
     }
 
     public static void setLogin(Context context, boolean isLogin) {

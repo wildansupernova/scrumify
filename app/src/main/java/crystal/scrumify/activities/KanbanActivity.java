@@ -18,6 +18,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
@@ -49,6 +50,7 @@ public class KanbanActivity extends BaseActivity
     private ViewPager viewPager;
     private TabLayout tabLayout;
     private Spinner groupSpinner;
+    private Button addGroupButton;
 
     /*** Activity Data ***/
     List<GroupListResponse> groupListResponses;
@@ -68,7 +70,7 @@ public class KanbanActivity extends BaseActivity
         viewPager = findViewById(R.id.kanban_view_pager);
         tabLayout = findViewById(R.id.kanban_tab_layout);
         groupSpinner = findViewById(R.id.kanban_group_spinner);
-
+        addGroupButton = findViewById(R.id.button2);
         toggleButton = new ActionBarDrawerToggle(
                 this, drawerLayout, toolbar, R.string.navigation_drawer_open,
                 R.string.navigation_drawer_close);
@@ -84,6 +86,11 @@ public class KanbanActivity extends BaseActivity
     @Override
     public void bindData() {
         /*** Setup Group Spinner ***/
+        updateListGroupSpinner();
+
+    }
+
+    private void updateListGroupSpinner() {
         ApiService.getApi().getUserGroups(PreferenceUtils.getUserId(this)).enqueue(
                 new Callback<ApiResponse<List<GroupListResponse>>>() {
                     @Override
@@ -96,7 +103,7 @@ public class KanbanActivity extends BaseActivity
                                 groupNames.add(group.getGroupName());
                             }
 
-                            groupNames.add("+ New Group");
+//                            groupNames.add("+ New Group");
 
                             ArrayAdapter<String> adapter = new ArrayAdapter<>(getApplicationContext()
                                     , R.layout.spinner_title_item, groupNames);
@@ -116,7 +123,6 @@ public class KanbanActivity extends BaseActivity
                 }
         );
     }
-
     private void setupKanbanColumn(int groupId) {
         List<KanbanColumn> kanbanColumns = new ArrayList<>();
         kanbanColumns.add(KanbanColumn.newInstance(ConstantUtils.KANBAN_BACKLOG_FRAG_ARG, groupId));
@@ -137,11 +143,14 @@ public class KanbanActivity extends BaseActivity
     @Override
     public void bindListener() {
         actionButton.setOnClickListener(actionButtonListener);
+
+        addGroupButton.setOnClickListener(addButtonListener);
         drawerLayout.addDrawerListener(toggleButton);
         navigationView.setNavigationItemSelectedListener(this);
         viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
         tabLayout.addOnTabSelectedListener(tabSelectedListener);
         groupSpinner.setOnItemSelectedListener(spinnerSelectedListener);
+
     }
 
     @Override
@@ -212,6 +221,30 @@ public class KanbanActivity extends BaseActivity
         }
     };
 
+    private View.OnClickListener addButtonListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            View inflater = getLayoutInflater().inflate(R.layout.form_new_group, null);
+            final EditText groupNameInput = inflater.findViewById(R.id.form_group_name);
+            final EditText groupDescInput = inflater.findViewById(R.id.form_group_desc);
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(KanbanActivity.this);
+            builder.setTitle("Create New Group")
+                    .setView(inflater)
+                    .setPositiveButton("Create", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            String groupName = groupNameInput.getText().toString().trim();
+                            String groupDesc = groupDescInput.getText().toString().trim();
+                            createNewGroup(groupName, groupDesc);
+                        }
+                    })
+                    .setNegativeButton("Cancel", null)
+                    .create()
+                    .show();
+        }
+    };
+
     private TabLayout.OnTabSelectedListener tabSelectedListener = new TabLayout.OnTabSelectedListener() {
         @Override
         public void onTabSelected(TabLayout.Tab tab) {
@@ -228,28 +261,30 @@ public class KanbanActivity extends BaseActivity
     private Spinner.OnItemSelectedListener spinnerSelectedListener = new Spinner.OnItemSelectedListener() {
         @Override
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-            if (position == groupListResponses.size()) {
-                View inflater = getLayoutInflater().inflate(R.layout.form_new_group, null);
-                final EditText groupNameInput = inflater.findViewById(R.id.form_group_name);
-                final EditText groupDescInput = inflater.findViewById(R.id.form_group_desc);
 
-                AlertDialog.Builder builder = new AlertDialog.Builder(KanbanActivity.this);
-                builder.setTitle("Create New Group")
-                        .setView(inflater)
-                        .setPositiveButton("Create", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                String groupName = groupNameInput.getText().toString().trim();
-                                String groupDesc = groupDescInput.getText().toString().trim();
-                                createNewGroup(groupName, groupDesc);
-                            }
-                        })
-                        .setNegativeButton("Cancel", null)
-                        .create()
-                        .show();
-            } else {
+
+//            if (position == groupListResponses.size()) {
+//                View inflater = getLayoutInflater().inflate(R.layout.form_new_group, null);
+//                final EditText groupNameInput = inflater.findViewById(R.id.form_group_name);
+//                final EditText groupDescInput = inflater.findViewById(R.id.form_group_desc);
+//
+//                AlertDialog.Builder builder = new AlertDialog.Builder(KanbanActivity.this);
+//                builder.setTitle("Create New Group")
+//                        .setView(inflater)
+//                        .setPositiveButton("Create", new DialogInterface.OnClickListener() {
+//                            @Override
+//                            public void onClick(DialogInterface dialog, int which) {
+//                                String groupName = groupNameInput.getText().toString().trim();
+//                                String groupDesc = groupDescInput.getText().toString().trim();
+//                                createNewGroup(groupName, groupDesc);
+//                            }
+//                        })
+//                        .setNegativeButton("Cancel", null)
+//                        .create()
+//                        .show();
+//            } else {
                 setupKanbanColumn(groupListResponses.get(position).getGroupId());
-            }
+//            }
         }
 
         @Override
@@ -263,15 +298,18 @@ public class KanbanActivity extends BaseActivity
                 .enqueue(new Callback<ApiResponse<String>>() {
                     @Override
                     public void onResponse(Call<ApiResponse<String>> call, Response<ApiResponse<String>> response) {
+                        updateListGroupSpinner();
                         if (response.isSuccessful()) {
                             startActivity(new Intent(KanbanActivity.this, InviteMemberActivity.class));
                         } else {
 
                         }
+
                     }
 
                     @Override
                     public void onFailure(Call<ApiResponse<String>> call, Throwable t) {
+                        updateListGroupSpinner();
                         Log.d(KanbanActivity.class.getSimpleName(), t.getMessage());
                     }
                 });
