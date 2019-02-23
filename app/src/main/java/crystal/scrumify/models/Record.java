@@ -1,21 +1,29 @@
 package crystal.scrumify.models;
 
+import android.annotation.SuppressLint;
+
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 public class Record {
 
-    private String record_title;
+    private String recordTitle;
     private String recorder;
+    private String dateCreated;
 
-    public Record(String record_title, String recorder) {
-        this.record_title = record_title;
+    @SuppressLint("NewApi")
+    public Record(String recordTitle, String recorder) {
+        this.recordTitle = recordTitle;
         this.recorder = recorder;
+        this.dateCreated = DateTimeFormatter.ofPattern("YYYY-MM-DD HH:MM:SS").format(LocalDateTime.now());
     }
 
-    public String getRecord_title() {
-        return record_title;
+    public String getRecordTitle() {
+        return recordTitle;
     }
 
-    public void setRecord_title(String record_title) {
-        this.record_title = record_title;
+    public void setRecordTitle(String recordTitle) {
+        this.recordTitle = recordTitle;
     }
 
     public String getRecorder() {
@@ -24,5 +32,9 @@ public class Record {
 
     public void setRecorder(String recorder) {
         this.recorder = recorder;
+    }
+
+    public String getDateCreated() {
+        return dateCreated;
     }
 }

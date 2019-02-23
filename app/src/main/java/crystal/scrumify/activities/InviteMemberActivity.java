@@ -1,5 +1,6 @@
 package crystal.scrumify.activities;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -25,8 +26,11 @@ public class InviteMemberActivity extends BaseActivity {
     private TextView resultEmail;
     private Button inviteButton;
 
+    private int groupId = 0;
+
     public InviteMemberActivity() {
         super(R.layout.activity_invite_member);
+        groupId = getIntent().getIntExtra("groupId", 0);
     }
 
     @Override

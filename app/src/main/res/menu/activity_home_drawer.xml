@@ -9,9 +9,9 @@
             android:icon="@drawable/ic_menu_camera"
             android:title="Invite" />
         <item
-            android:id="@+id/nav_gallery"
+            android:id="@+id/nav_record"
             android:icon="@drawable/ic_menu_gallery"
-            android:title="Gallery" />
+            android:title="Record" />
         <item
             android:id="@+id/nav_slideshow"
             android:icon="@drawable/ic_menu_slideshow"

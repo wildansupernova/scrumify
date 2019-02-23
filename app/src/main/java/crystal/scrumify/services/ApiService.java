@@ -5,6 +5,7 @@ import com.google.gson.GsonBuilder;
 
 import java.util.List;
 
+import crystal.scrumify.models.Group;
 import crystal.scrumify.models.User;
 import crystal.scrumify.responses.ApiResponse;
 import crystal.scrumify.responses.GroupListResponse;
@@ -22,7 +23,7 @@ import retrofit2.http.Query;
 
 public class ApiService {
 
-    public static final String BASE_URL = "http://10.0.25.166:8000/api/";
+    public static final String BASE_URL = "http://192.168.43.212:8000/api/";
 
     public static Api getApi() {
         Gson gson = new GsonBuilder().setLenient().create();
@@ -53,7 +54,7 @@ public class ApiService {
 
         @FormUrlEncoded
         @POST("group")
-        Call<ApiResponse<String>> createGroup(
+        Call<ApiResponse<Group>> createGroup(
                 @Field("group_name") String groupName,
                 @Field("description") String groupDesc,
                 @Field("user_id") int userId
