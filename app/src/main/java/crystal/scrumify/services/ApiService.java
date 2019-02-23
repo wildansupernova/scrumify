@@ -60,10 +60,10 @@ public class ApiService {
         @FormUrlEncoded
         @POST("group")
         Call<ApiResponse<Group>> createGroup(
-                @Field("group_name") String groupName,
-                @Field("description") String groupDesc,
-                @Field("user_id") int userId
-        );
+                        @Field("group_name") String groupName,
+                        @Field("description") String groupDesc,
+                        @Field("user_id") int userId
+                );
 
         @FormUrlEncoded
         @POST("group/member")

@@ -55,7 +55,7 @@ public class KanbanActivity extends BaseActivity
 
     /*** Activity Data ***/
     List<GroupListResponse> groupListResponses;
-    int currentPosition = 1;
+    int currentPosition = 0;
 
     public KanbanActivity() {
         super(R.layout.activity_kanban);
