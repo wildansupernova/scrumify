@@ -50,13 +50,20 @@ public class ApiService {
         Call<ApiResponse<String>> createGroup(
                 @Field("group_name") String groupName,
                 @Field("description") String groupDesc,
-                @Field("user_id") int user_id
+                @Field("user_id") int userId
+        );
+
+        @FormUrlEncoded
+        @POST("group/member")
+        Call<ApiResponse<String>> createGroupMember(
+                @Field("group_id") int groupId,
+                @Field("email") String emailReceiver
         );
 
         @GET("group/{group_id}/tasks")
         Call<ApiResponse<List<TaskResponse>>> getTasks(
                 @Path("group_id") int groupId,
-                @Query("status_kanban") String statusKanban
+                @Query("kanban_status") String kanbanStatus
         );
     }
 }

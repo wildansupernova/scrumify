@@ -10,14 +10,14 @@ public class TaskResponse {
     @SerializedName("group_id")
     private int groupId;
 
-    @SerializedName("taskname")
+    @SerializedName("task_name")
     private String taskName;
 
     @SerializedName("description")
     private String description;
 
-    @SerializedName("status_kanban")
-    private String statusKanban;
+    @SerializedName("kanban_status")
+    private String kanbanStatus;
 
     @SerializedName("work_hour")
     private int workHour;
@@ -63,12 +63,12 @@ public class TaskResponse {
         this.description = description;
     }
 
-    public String getStatusKanban() {
-        return statusKanban;
+    public String getKanbanStatus() {
+        return kanbanStatus;
     }
 
-    public void setStatusKanban(String statusKanban) {
-        this.statusKanban = statusKanban;
+    public void setKanbanStatus(String kanbanStatus) {
+        this.kanbanStatus = kanbanStatus;
     }
 
     public int getWorkHour() {
@@ -104,6 +104,6 @@ public class TaskResponse {
     }
 
     public boolean moveable() {
-        return statusKanban.equals("OPEN") || statusKanban.equals("WIP");
+        return kanbanStatus.equals("OPEN") || kanbanStatus.equals("WIP");
     }
 }

@@ -110,6 +110,9 @@ public class RecordAdapter extends RecyclerView.Adapter<RecordAdapter.RecordHold
 
         private void bindListener() {
             info.setOnClickListener(infoClickListener);
+            stop.setOnClickListener(stopClickListener);
+            start.setOnClickListener(startClickListener);
+            resume.setOnClickListener(resumeClickListener);
         }
 
         public void bind(Record item) {

@@ -184,8 +184,8 @@ public class KanbanActivity extends BaseActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
-            // Handle the camera action
+        if (id == R.id.nav_invite) {
+            startActivity(new Intent(KanbanActivity.this, InviteMemberActivity.class));
         } else if (id == R.id.nav_gallery) {
 
         } else if (id == R.id.nav_slideshow) {
@@ -215,7 +215,9 @@ public class KanbanActivity extends BaseActivity
     private TabLayout.OnTabSelectedListener tabSelectedListener = new TabLayout.OnTabSelectedListener() {
         @Override
         public void onTabSelected(TabLayout.Tab tab) {
-            viewPager.setCurrentItem(tab.getPosition(), true);
+            if (!(tab.getText() == "+ New Group")) {
+                viewPager.setCurrentItem(tab.getPosition(), true);
+            }
         }
 
         @Override
