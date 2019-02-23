@@ -125,7 +125,26 @@ public class KanbanActivity extends BaseActivity
                 }
         );
     }
+
     private void setupKanbanColumn(int groupId) {
+        List<KanbanColumn> kanbanColumns = new ArrayList<>();
+        kanbanColumns.add(KanbanColumn.newInstance(ConstantUtils.KANBAN_BACKLOG_FRAG_ARG, groupId));
+        kanbanColumns.add(KanbanColumn.newInstance(ConstantUtils.KANBAN_TODO_FRAG_ARG, groupId));
+        kanbanColumns.add(KanbanColumn.newInstance(ConstantUtils.KANBAN_PROGRESS_FRAG_ARG, groupId));
+        kanbanColumns.add(KanbanColumn.newInstance(ConstantUtils.KANBAN_DONE_FRAG_ARG, groupId));
+
+        if (tabLayout.getTabCount() == 0) {
+            for (KanbanColumn column : kanbanColumns) {
+                tabLayout.addTab(tabLayout.newTab().setText(column.getColumnTitle()));
+            }
+        }
+
+        KanbanAdapter adapter = new KanbanAdapter(getSupportFragmentManager(), kanbanColumns);
+        viewPager.setAdapter(adapter);
+    }
+
+    public void setupKanbanColumnCurrent() {
+        int groupId = groupListResponses.get(currentPosition).getGroupId();
         List<KanbanColumn> kanbanColumns = new ArrayList<>();
         kanbanColumns.add(KanbanColumn.newInstance(ConstantUtils.KANBAN_BACKLOG_FRAG_ARG, groupId));
         kanbanColumns.add(KanbanColumn.newInstance(ConstantUtils.KANBAN_TODO_FRAG_ARG, groupId));
@@ -184,6 +203,10 @@ public class KanbanActivity extends BaseActivity
 
             case R.id.action_settings:
                 return true;
+            case R.id.action_logout:
+                PreferenceUtils.setLogin(KanbanActivity.this, false);
+                startActivity(new Intent(KanbanActivity.this, AuthActivity.class));
+                return true;
         }
 
         return super.onOptionsItemSelected(item);
@@ -220,10 +243,56 @@ public class KanbanActivity extends BaseActivity
     private View.OnClickListener actionButtonListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            Snackbar.make(v, "Replace with your own action", Snackbar.LENGTH_LONG)
-                    .setAction("Action", null).show();
+//            Snackbar.make(v, "Replace with your own action", Snackbar.LENGTH_LONG)
+//                    .setAction("Action", null).show();
+            View inflater = getLayoutInflater().inflate(R.layout.form_new_task, null);
+            final EditText taskNameInput = inflater.findViewById(R.id.form_task_name);
+            final EditText taskDescInput = inflater.findViewById(R.id.form_task_desc);
+            final EditText taskWorkHourInput = inflater.findViewById(R.id.form_task_work_hour);
+            final Spinner spinner = (Spinner) inflater.findViewById(R.id.task_spinner);
+            ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(KanbanActivity.this, R.array.kanban_status, android.R.layout.simple_spinner_item);
+            // Specify the layout to use when the list of choices appears
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            // Apply the adapter to the spinner
+            spinner.setAdapter(adapter);
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(KanbanActivity.this);
+            builder.setTitle("Create New Task")
+                    .setView(inflater)
+                    .setPositiveButton("Create", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            String taskName = taskNameInput.getText().toString().trim();
+                            String taskDesc = taskDescInput.getText().toString().trim();
+                            int taskWorkHour = Integer.parseInt(taskWorkHourInput.getText().toString().trim());
+                            String status_kanban = spinner.getSelectedItem().toString().trim();
+                            createNewTask(taskName, taskDesc, status_kanban, taskWorkHour);
+                        }
+                    })
+                    .setNegativeButton("Cancel", null)
+                    .create()
+                    .show();
         }
     };
+
+    private void createNewTask (String taskName, String taskDesc, String status_kanban, int taskWorkHour) {
+        ApiService.getApi().createTask(groupListResponses.get(currentPosition).getGroupId(),taskName, taskDesc, status_kanban,taskWorkHour)
+                .enqueue(new Callback<ApiResponse<String>>() {
+                    @Override
+                    public void onResponse(Call<ApiResponse<String>> call, Response<ApiResponse<String>> response) {
+
+                        if (response.isSuccessful()) {
+                            setupKanbanColumn(groupListResponses.get(currentPosition).getGroupId());
+                        }
+
+                    }
+
+                    @Override
+                    public void onFailure(Call<ApiResponse<String>> call, Throwable t) {
+                        Log.d(KanbanActivity.class.getSimpleName(), t.getMessage());
+                    }
+                });
+    }
 
     private View.OnClickListener addButtonListener = new View.OnClickListener() {
         @Override
@@ -248,6 +317,38 @@ public class KanbanActivity extends BaseActivity
                     .show();
         }
     };
+
+//    private View.OnClickListener addTaskButtonListener = new View.OnClickListener() {
+//        @Override
+//        public void onClick(View v) {
+//            View inflater = getLayoutInflater().inflate(R.layout.form_new_group, null);
+//            final EditText taskNameInput = inflater.findViewById(R.id.form_task_name);
+//            final EditText taskDescInput = inflater.findViewById(R.id.form_task_desc);
+//
+//            final Spinner spinner = (Spinner) findViewById(R.id.task_spinner);
+//            ArrayAdapter<String> adapter = ArrayAdapter.createFromResource(this, R.array.kanban_status, android.R.layout.simple_spinner_item);
+//            // Specify the layout to use when the list of choices appears
+//            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+//            // Apply the adapter to the spinner
+//            spinner.setAdapter(adapter);
+//
+//            AlertDialog.Builder builder = new AlertDialog.Builder(KanbanActivity.this);
+//            builder.setTitle("Create New Task")
+//                    .setView(inflater)
+//                    .setPositiveButton("Create", new DialogInterface.OnClickListener() {
+//                        @Override
+//                        public void onClick(DialogInterface dialog, int which) {
+//                            String groupName = taskNameInput.getText().toString().trim();
+//                            String groupDesc = taskDescInput.getText().toString().trim();
+//                            String status_kanban = spinner.getSelectedItem().toString();
+////                            createNewGroup(groupName, groupDesc);
+//                        }
+//                    })
+//                    .setNegativeButton("Cancel", null)
+//                    .create()
+//                    .show();
+//        }
+//    };
 
     private TabLayout.OnTabSelectedListener tabSelectedListener = new TabLayout.OnTabSelectedListener() {
         @Override

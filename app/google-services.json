@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "985205803004",
+    "firebase_url": "https://pbdandroid-1550738565959.firebaseio.com",
+    "project_id": "pbdandroid-1550738565959",
+    "storage_bucket": "pbdandroid-1550738565959.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:985205803004:android:e1161fb7eb6b1a85",
+        "android_client_info": {
+          "package_name": "crystal.scrumify"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "985205803004-8tnikqvt7p31blrcnbne95ogvlmr0s95.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "crystal.scrumify",
+            "certificate_hash": "dddf4c5c24da5f4dac4cca2ff77106d4856ef4f4"
+          }
+        },
+        {
+          "client_id": "985205803004-vjuu0d9g2akmokvotc9lurd9776m034m.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBBolOsSHOSduytGcjldcWvOAHqpcnMx7M"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "985205803004-vjuu0d9g2akmokvotc9lurd9776m034m.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

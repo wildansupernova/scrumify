@@ -20,12 +20,13 @@ import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
+import retrofit2.http.PUT;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 public class ApiService {
 
-    public static final String BASE_URL = "http://192.168.43.212:8000/api/";
+    public static final String BASE_URL = "http://192.168.43.22:8000/api/";
 
     public static Api getApi() {
         Gson gson = new GsonBuilder().setLenient().create();
@@ -63,7 +64,17 @@ public class ApiService {
                         @Field("group_name") String groupName,
                         @Field("description") String groupDesc,
                         @Field("user_id") int userId
-                );
+        );
+
+        @FormUrlEncoded
+        @POST("tasks")
+        Call<ApiResponse<String>> createTask(
+                @Field("group_id") int groupId,
+                @Field("task_name") String taskName,
+                @Field("description") String taskDesc,
+                @Field("kanban_status") String kanban_status,
+                @Field("work_hour") int work_hour
+        );
 
         @FormUrlEncoded
         @POST("group/member")
@@ -76,6 +87,11 @@ public class ApiService {
         Call<ApiResponse<List<TaskResponse>>> getTasks(
                 @Path("group_id") int groupId,
                 @Query("kanban_status") String kanbanStatus
+        );
+
+        @PUT("task/move/{task_id}")
+        Call<ApiResponse<String>> moveTask(
+                @Path("task_id") int taskId
         );
     }
 }

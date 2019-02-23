@@ -63,6 +63,7 @@ public class AuthActivity extends BaseActivity {
 
         if (PreferenceUtils.isLogin(AuthActivity.this)) {
             startActivity(new Intent(AuthActivity.this, KanbanActivity.class));
+            finish();
         }
 
     }
@@ -90,7 +91,10 @@ public class AuthActivity extends BaseActivity {
             Log.d(TAG, account.getIdToken());
             serverLogin(account.getIdToken());
         } catch (ApiException e) {
-            serverLogin(null);
+            Log.d(TAG, "gagalsiah");
+            Log.d(TAG, "gagalsiah");
+            Log.d(TAG, "gagalsiah");
+//            serverLogin(null);
         }
     }
 
@@ -119,6 +123,7 @@ public class AuthActivity extends BaseActivity {
                                 PreferenceUtils.setUserId(context, user.getId());
 
                                 startActivity(new Intent(AuthActivity.this, KanbanActivity.class));
+                                finish();
                             }
                         }
 
