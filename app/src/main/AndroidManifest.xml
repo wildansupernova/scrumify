@@ -43,15 +43,16 @@
         <activity
             android:name=".activities.CommentActivity"
             android:theme="@style/Theme.AppCompat.Light" />
-        <activity android:name=".activities.BurndownChartActivity"></activity>
+        <activity android:name=".activities.BurndownChartActivity" />
 
         <receiver
             android:name=".receivers.BurndownChartReceiver"
             android:enabled="true"
             android:exported="true" />
 
-        <activity android:name=".activities.InviteMemberActivity"></activity>
-        <activity android:name=".activities.RecordActivity"></activity>
+        <activity android:name=".activities.InviteMemberActivity" />
+        <activity android:name=".activities.RecordActivity" />
+        <activity android:name=".activities.LocationActivity"></activity>
     </application>
 
 </manifest>
