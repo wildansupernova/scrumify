@@ -8,11 +8,12 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Build;
+import android.os.Bundle;
 import android.speech.RecognizerIntent;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.EditText;
@@ -30,40 +31,38 @@ import crystal.scrumify.utils.PdfCreator;
 public class RecordActivity extends BaseActivity implements SensorEventListener {
 
     /*** XML View Component ***/
-    private LinearLayout recordLayout;
-    private LinearLayout buttonLayout;
     private TextView newText;
-    private FloatingActionButton newButton;
+    private FloatingActionButton micButton;
     private FloatingActionButton docButton;
+    private TextView sensorInfo;
 
     /*** Sensor ***/
     private SensorManager sensorManager;
     private Sensor proximity;
+    private Sensor ambient;
     private static final int BEST_DISTANCE = 5;
     private static final int GOOD_DISTANCE = 20;
 
     /*** Context Data ***/
     private boolean isMicClicked;
     private boolean isSensorExist;
-    private boolean isSensorPaused;
+    private float temperature;
     private String allText;
 
     /*** Listener ***/
-    private View.OnClickListener newButtonListener = view -> {
+    private View.OnClickListener micButtonListener = view -> {
         Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
 
         if (intent.resolveActivity(getPackageManager()) != null) {
-            isSensorExist = true;
             startActivityForResult(intent, 9);
 
-            if (!isSensorPaused) {
-                sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+            if (!isSensorExist) {
+                isSensorExist = true;
                 proximity = sensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY);
             }
         } else {
-            isSensorExist = false;
             Toast.makeText(RecordActivity.this, "Your Device Don't Support Speech Input", Toast.LENGTH_SHORT).show();
         }
     };
@@ -79,7 +78,7 @@ public class RecordActivity extends BaseActivity implements SensorEventListener 
                     .setView(inflater)
                     .setPositiveButton("Yes", (dialog, which) -> {
                         String docName = docNameInput.getText().toString().trim();
-                        PdfCreator.createPdf(FileUtils.getAppPath(RecordActivity.this) + docName, RecordActivity.this, allText);
+                        PdfCreator.createPdf(FileUtils.getAppPath(RecordActivity.this) + docName, RecordActivity.this, temperature, allText);
                     })
                     .setNegativeButton("No", null)
                     .create()
@@ -96,8 +95,8 @@ public class RecordActivity extends BaseActivity implements SensorEventListener 
                 if (resultCode == RESULT_OK && data != null) {
                     ArrayList<String> result = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
 
-                    if (isMicClicked) {
-                        isMicClicked = false;
+                    if (!isMicClicked) {
+                        isMicClicked = true;
                         allText = result.get(0) + ".";
                     } else {
                         allText += "\n\n" + result.get(0) + ".";
@@ -105,41 +104,63 @@ public class RecordActivity extends BaseActivity implements SensorEventListener 
                     newText.setText(allText);
                 }
 
-                if (isSensorExist) sensorManager.unregisterListener(this);
+                if (isSensorExist) sensorManager.unregisterListener(this, proximity);
+                sensorInfo.setVisibility(View.INVISIBLE);
                 break;
         }
     }
 
     public RecordActivity() {
         super(R.layout.activity_record);
-        isMicClicked = true;
+        isMicClicked = false;
+        isSensorExist = false;
         allText = "Happy Meeting! :)";
+    }
+
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        ambient = sensorManager.getDefaultSensor(Sensor.TYPE_AMBIENT_TEMPERATURE);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        if (isSensorExist) sensorManager.unregisterListener(this, proximity);
-        buttonLayout.setVisibility(View.VISIBLE);
+
+        sensorManager.unregisterListener(this, proximity);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        isSensorPaused = true;
-        if (isSensorExist) sensorManager.registerListener(this, proximity, SensorManager.SENSOR_DELAY_NORMAL);
+
+        sensorManager.registerListener(this, proximity, SensorManager.SENSOR_DELAY_NORMAL);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        sensorManager.unregisterListener(this, ambient);
     }
 
     @Override
     public void onSensorChanged(SensorEvent event) {
         if (event.sensor.getType() == Sensor.TYPE_PROXIMITY) {
+            Log.d(RecordActivity.class.getSimpleName(), "Proximity: " + String.valueOf(event.values[0]));
             if (event.values[0] >= -BEST_DISTANCE && event.values[0] <= BEST_DISTANCE) {
-                showSnackBar("BEST", R.color.colorPrimary);
+                showProximityInfo("BEST", R.color.colorPrimary);
             } else if (event.values[0] >= -GOOD_DISTANCE && event.values[0] <= GOOD_DISTANCE){
-                showSnackBar("GOOD", R.color.colorPrimaryDark);
+                showProximityInfo("GOOD", R.color.colorPrimaryDark);
             } else {
-                showSnackBar("BAD", R.color.colorAccent);
+                showProximityInfo("BAD", R.color.colorAccent);
             }
+        }
+        if (event.sensor.getType() == Sensor.TYPE_AMBIENT_TEMPERATURE) {
+            Log.d(RecordActivity.class.getSimpleName(), "Temperature: " + String.valueOf(event.values[0]));
+            temperature = event.values[0];
         }
     }
 
@@ -150,47 +171,41 @@ public class RecordActivity extends BaseActivity implements SensorEventListener 
 
     @Override
     public void bindView() {
-        recordLayout = findViewById(R.id.record_layout);
-        buttonLayout = findViewById(R.id.record_layout_button);
         newText = findViewById(R.id.record_new_text);
-        newButton = findViewById(R.id.record_new_button);
+        micButton = findViewById(R.id.record_mic_button);
         docButton = findViewById(R.id.record_doc_button);
+        sensorInfo = findViewById(R.id.record_proximity_info);
     }
 
     @Override
     public void setupView() {
         newText.setText(allText);
+        sensorInfo.setVisibility(View.INVISIBLE);
     }
 
     @Override
     public void bindListener() {
-        newButton.setOnClickListener(newButtonListener);
+        micButton.setOnClickListener(micButtonListener);
         docButton.setOnClickListener(docButtonListener);
     }
 
     @Override
     public void unbindListener() {
-        newButton.setOnClickListener(null);
+        micButton.setOnClickListener(null);
         docButton.setOnClickListener(null);
     }
 
-    private void showSnackBar(String text, int color) {
-        Snackbar snackbar = Snackbar.make(recordLayout, text, Snackbar.LENGTH_LONG);
-
-        View view = snackbar.getView();
-        view.setBackgroundResource(color);
-
-        TextView textview = view.findViewById(android.support.design.R.id.snackbar_text);
-
-        textview.setTypeface(Typeface.DEFAULT_BOLD);
+    private void showProximityInfo(String text, int color) {
+        sensorInfo.setText(text);
+        sensorInfo.setBackgroundResource(color);
+        sensorInfo.setTypeface(Typeface.DEFAULT_BOLD);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-            textview.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+            sensorInfo.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
         } else {
-            textview.setGravity(Gravity.CENTER_HORIZONTAL);
+            sensorInfo.setGravity(Gravity.CENTER_HORIZONTAL);
         }
 
-        buttonLayout.setVisibility(View.GONE);
-        snackbar.show();
+        sensorInfo.setVisibility(View.VISIBLE);
     }
 }

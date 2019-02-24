@@ -26,7 +26,7 @@ import retrofit2.http.Query;
 
 public class ApiService {
 
-    public static final String BASE_URL = "http://192.168.43.30:8000/api/";
+    public static final String BASE_URL = "http://192.168.1.13:8000/api/";
 
     public static Api getApi() {
         Gson gson = new GsonBuilder().setLenient().create();
@@ -61,9 +61,9 @@ public class ApiService {
         @FormUrlEncoded
         @POST("group")
         Call<ApiResponse<Group>> createGroup(
-                        @Field("group_name") String groupName,
-                        @Field("description") String groupDesc,
-                        @Field("user_id") int userId
+                @Field("group_name") String groupName,
+                @Field("description") String groupDesc,
+                @Field("user_id") int userId
         );
 
         @FormUrlEncoded
