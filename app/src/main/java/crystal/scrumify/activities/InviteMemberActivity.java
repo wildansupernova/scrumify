@@ -51,7 +51,7 @@ public class InviteMemberActivity extends BaseActivity {
     public void bindData() {
         groupId = getIntent().getIntExtra("groupId", 0);
         Log.d(InviteMemberActivity.class.getSimpleName(), String.valueOf(groupId));
-        resultName.setText("Find your partner with email");
+        resultName.setText("Find Your Partner With E-mail");
         resultEmail.setText("");
     }
 
@@ -77,7 +77,7 @@ public class InviteMemberActivity extends BaseActivity {
                     resultName.setText(user.getName());
                     resultEmail.setText(user.getEmail());
                 } else {
-                    resultName.setText("Email Not Found");
+                    resultName.setText("E-mail Not Found");
                     resultEmail.setText("");
                 }
             }

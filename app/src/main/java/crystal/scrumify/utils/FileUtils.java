@@ -40,7 +40,7 @@ public class FileUtils {
 
         //TODO you want to use this method then create file provider in androidmanifest.xml with fileprovider name
 
-        Uri uri = FileProvider.getUriForFile(context, context.getApplicationContext().getPackageName() + ".fileprovider", url);
+        Uri uri = FileProvider.getUriForFile(context, "crystal.scrumify.pdf.fileprovider", url);
 
         String urlString = url.toString().toLowerCase();
 

@@ -20,12 +20,16 @@ import com.itextpdf.text.pdf.draw.LineSeparator;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
 
 public class PdfCreator {
 
     public static final String TAG = PdfCreator.class.getSimpleName();
     
-    public static void createPdf(String destFile, Context mContext, String dateNotulen, String notulen) {
+    public static void createPdf(String destFile, Context mContext, String notulen) {
 
         if (new File(destFile).exists()) {
             new File(destFile).delete();
@@ -75,6 +79,7 @@ public class PdfCreator {
 
             // Fields of Order Details...
             // Adding Chunks for Title and value
+            String dateNotulen = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
             Font mOrderIdFont = new Font(urName, mHeadingFontSize, Font.NORMAL, mColorAccent);
             Chunk mOrderIdChunk = new Chunk("Date : " + dateNotulen, mOrderIdFont);
             Paragraph mOrderIdParagraph = new Paragraph(mOrderIdChunk);
@@ -103,6 +108,7 @@ public class PdfCreator {
 
             document.close();
 
+            Log.d(TAG, destFile);
             Toast.makeText(mContext, "Created... :)", Toast.LENGTH_SHORT).show();
 
             FileUtils.openFile(mContext, new File(destFile));
