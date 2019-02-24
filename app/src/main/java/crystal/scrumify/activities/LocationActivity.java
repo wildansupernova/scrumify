@@ -30,5 +30,4 @@ public class LocationActivity extends AppCompatActivity {
             latitudeText.setText(address);
         });
     }
-
 }
