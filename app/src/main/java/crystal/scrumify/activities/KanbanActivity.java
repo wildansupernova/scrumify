@@ -225,7 +225,7 @@ public class KanbanActivity extends BaseActivity
         } else if (id == R.id.nav_record) {
             startActivity(new Intent(KanbanActivity.this, RecordActivity.class));
         } else if (id == R.id.nav_slideshow) {
-
+            startActivity(new Intent(KanbanActivity.this, LocationActivity.class));
         } else if (id == R.id.nav_manage) {
 
         } else if (id == R.id.nav_share) {
