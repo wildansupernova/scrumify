@@ -1,7 +1,13 @@
 package crystal.scrumify.activities;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
+import android.os.Bundle;
 import android.speech.RecognizerIntent;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -21,13 +27,19 @@ import crystal.scrumify.models.Record;
 import crystal.scrumify.utils.FileUtils;
 import crystal.scrumify.utils.PdfCreator;
 
-public class RecordActivity extends BaseActivity {
+public class RecordActivity extends BaseActivity implements SensorEventListener {
 
     /*** XML View Component ***/
     private TextView newText;
     private FloatingActionButton newButton;
     private FloatingActionButton docButton;
 
+    /*** Sensor ***/
+    private SensorManager sensorManager;
+    private Sensor proximity;
+    private static final int SENSOR_SENSITIVITY = 4;
+
+    /*** Context Data ***/
     private boolean isClicked;
     private String allText;
 
@@ -94,6 +106,44 @@ public class RecordActivity extends BaseActivity {
         super(R.layout.activity_record);
         isClicked = true;
         allText = "Happy Meeting! :)";
+    }
+
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        proximity = sensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        sensorManager.registerListener(this, proximity, SensorManager.SENSOR_DELAY_NORMAL);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        sensorManager.unregisterListener(this);
+    }
+
+    @Override
+    public void onSensorChanged(SensorEvent event) {
+        if (event.sensor.getType() == Sensor.TYPE_PROXIMITY) {
+            if (event.values[0] >= -SENSOR_SENSITIVITY && event.values[0] <= SENSOR_SENSITIVITY) {
+                //near
+                Toast.makeText(getApplicationContext(), "near", Toast.LENGTH_SHORT).show();
+            } else {
+                //far
+                Toast.makeText(getApplicationContext(), "far", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {
+
     }
 
     @Override

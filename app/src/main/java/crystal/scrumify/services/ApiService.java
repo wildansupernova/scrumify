@@ -26,7 +26,7 @@ import retrofit2.http.Query;
 
 public class ApiService {
 
-    public static final String BASE_URL = "http://192.168.43.22:8000/api/";
+    public static final String BASE_URL = "http://192.168.43.30:8000/api/";
 
     public static Api getApi() {
         Gson gson = new GsonBuilder().setLenient().create();
@@ -67,16 +67,6 @@ public class ApiService {
         );
 
         @FormUrlEncoded
-        @POST("tasks")
-        Call<ApiResponse<String>> createTask(
-                @Field("group_id") int groupId,
-                @Field("task_name") String taskName,
-                @Field("description") String taskDesc,
-                @Field("kanban_status") String kanban_status,
-                @Field("work_hour") int work_hour
-        );
-
-        @FormUrlEncoded
         @POST("group/member")
         Call<ApiResponse<String>> createGroupMember(
                 @Field("group_id") int groupId,
@@ -87,6 +77,16 @@ public class ApiService {
         Call<ApiResponse<List<TaskResponse>>> getTasks(
                 @Path("group_id") int groupId,
                 @Query("kanban_status") String kanbanStatus
+        );
+
+        @FormUrlEncoded
+        @POST("tasks")
+        Call<ApiResponse<String>> createTask(
+                @Field("group_id") int groupId,
+                @Field("task_name") String taskName,
+                @Field("description") String taskDesc,
+                @Field("kanban_status") String kanban_status,
+                @Field("work_hour") int work_hour
         );
 
         @PUT("task/move/{task_id}")
