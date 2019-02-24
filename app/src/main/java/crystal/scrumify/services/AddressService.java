@@ -4,9 +4,13 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.IntentSender;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -20,7 +24,12 @@ import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResult;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
 
-import crystal.scrumify.contracts.OnGetLocation;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+
+import crystal.scrumify.contracts.OnGetAddressCompleted;
 
 public class AddressService {
 
@@ -31,12 +40,12 @@ public class AddressService {
     private LocationListener locationListener;
 
     private LocationRequest locationRequest;
-    private OnGetLocation onGetLocation;
+    private OnGetAddressCompleted onGetAddressCompleted;
 
-    public AddressService (Context context, OnGetLocation onGetLocation) {
+    public AddressService (Context context, OnGetAddressCompleted onGetAddressCompleted) {
 
         this.context = context;
-        this.onGetLocation = onGetLocation;
+        this.onGetAddressCompleted = onGetAddressCompleted;
 
         setupConnectionCallbacks();
         setupConnectionFailedListener();
@@ -81,7 +90,7 @@ public class AddressService {
     }
 
     private void setupLocationChangedListener() {
-        locationListener = location -> onGetLocation.onGetLocation(location);
+        locationListener = location -> new ConvertAddressTask().execute(location);
     }
 
     private void settingRequest() {
@@ -120,7 +129,7 @@ public class AddressService {
         Location lastLocation = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
 
         if (lastLocation != null) {
-            onGetLocation.onGetLocation(lastLocation);
+            new ConvertAddressTask().execute(lastLocation);
         } else {
             Log.i("Current Location", "No data for location found");
             if (!googleApiClient.isConnected())
@@ -130,4 +139,41 @@ public class AddressService {
         }
     }
 
+    private class ConvertAddressTask extends AsyncTask<Location, Void, String> {
+        @Override
+        protected String doInBackground(Location... locations) {
+            Geocoder geocoder = new Geocoder(context, Locale.getDefault());
+            Location location = locations[0];
+
+            List<Address> addresses = null;
+            String message = "";
+
+            try {
+                addresses = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
+            } catch (IOException e) {
+                message = "Not available";
+                e.printStackTrace();
+            }
+
+            if (addresses == null || addresses.size() == 0) {
+                Toast.makeText(context, "No address found", Toast.LENGTH_SHORT).show();
+            } else {
+                Address address = addresses.get(0);
+                ArrayList<String> addressParts = new ArrayList<>();
+
+                for (int i=0; i<=address.getMaxAddressLineIndex(); i++) {
+                    addressParts.add(address.getAddressLine(i));
+                }
+                message = TextUtils.join("\n", addressParts);
+            }
+
+            return message;
+        }
+
+        @Override
+        protected void onPostExecute(String address) {
+            super.onPostExecute(address);
+            onGetAddressCompleted.onCompleted(address);
+        }
+    }
 }
