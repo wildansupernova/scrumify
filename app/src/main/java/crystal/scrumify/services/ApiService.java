@@ -5,9 +5,11 @@ import com.google.gson.GsonBuilder;
 
 import java.util.List;
 
+import crystal.scrumify.models.Event;
 import crystal.scrumify.models.Group;
 import crystal.scrumify.models.User;
 import crystal.scrumify.responses.ApiResponse;
+import crystal.scrumify.responses.ChartValue;
 import crystal.scrumify.responses.GroupListResponse;
 import crystal.scrumify.responses.LoginResponse;
 import crystal.scrumify.responses.TaskResponse;
@@ -26,7 +28,7 @@ import retrofit2.http.Query;
 
 public class ApiService {
 
-    public static final String BASE_URL = "http://192.168.43.22:8000/api/";
+    public static final String BASE_URL = "http://192.168.43.30:8000/api/";
 
     public static Api getApi() {
         Gson gson = new GsonBuilder().setLenient().create();
@@ -73,10 +75,23 @@ public class ApiService {
                 @Field("email") String emailReceiver
         );
 
+        @FormUrlEncoded
+        @POST("group/event")
+        Call<ApiResponse<String>> createGroupEvent(
+                @Field("group_id") int groupId,
+                @Field("total_sprint") int totalSprint,
+                @Field("sprint_time") String sprintTime
+        );
+
         @GET("group/{group_id}/tasks")
         Call<ApiResponse<List<TaskResponse>>> getTasks(
                 @Path("group_id") int groupId,
                 @Query("kanban_status") String kanbanStatus
+        );
+
+        @GET("group/{group_id}/history")
+        Call<ApiResponse<List<ChartValue>>> getChartValue(
+                @Path("group_id") int groupId
         );
 
         @FormUrlEncoded
@@ -85,8 +100,8 @@ public class ApiService {
                 @Field("group_id") int groupId,
                 @Field("task_name") String taskName,
                 @Field("description") String taskDesc,
-                @Field("kanban_status") String kanban_status,
-                @Field("work_hour") int work_hour
+                @Field("kanban_status") String kanbanStatus,
+                @Field("work_hour") int workHour
         );
 
         @PUT("task/move/{task_id}")

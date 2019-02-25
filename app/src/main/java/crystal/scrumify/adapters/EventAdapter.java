@@ -61,7 +61,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventHolder>
         }
 
         void bind(Event item) {
-            name.setText(item.getEventName());
+            name.setText("Daily Meeting");
             time.setText(item.getEventTime());
         }
     }

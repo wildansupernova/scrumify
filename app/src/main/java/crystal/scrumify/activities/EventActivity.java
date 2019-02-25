@@ -55,7 +55,7 @@ public class EventActivity extends BaseActivity {
     public void bindData() {
         events = new ArrayList<>();
         for (int i=0; i<10; i++) {
-            events.add(new Event("Sprint Planning", "Time: Tuesday, March 3 2019 (19:30)"));
+            events.add(new Event("Time: Tuesday, March 3 2019 (19:30)"));
         }
         adapter.setItems(events);
         setupView();

@@ -20,8 +20,8 @@ public class BaseActivity extends AppCompatActivity {
         setContentView(layout);
 
         bindView();
-        setupView();
         bindData();
+        setupView();
         bindListener();
     }
 

@@ -1,11 +1,14 @@
 package crystal.scrumify.activities;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.app.TimePickerDialog;
-import android.content.DialogInterface;
+import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
@@ -22,11 +25,12 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
-import android.widget.TimePicker;
 import android.widget.Toast;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import crystal.scrumify.R;
@@ -35,6 +39,7 @@ import crystal.scrumify.fragments.KanbanColumn;
 import crystal.scrumify.models.Group;
 import crystal.scrumify.responses.ApiResponse;
 import crystal.scrumify.responses.GroupListResponse;
+import crystal.scrumify.services.AlarmReceiver;
 import crystal.scrumify.services.ApiService;
 import crystal.scrumify.utils.ConstantUtils;
 import crystal.scrumify.utils.PreferenceUtils;
@@ -47,6 +52,7 @@ public class KanbanActivity extends BaseActivity
 
     /*** XML View Component ***/
     private Toolbar toolbar;
+    private AppBarLayout appBarLayout;
     private FloatingActionButton actionButton;
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle toggleButton;
@@ -66,8 +72,15 @@ public class KanbanActivity extends BaseActivity
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        setupView();
+    }
+
+    @Override
     public void bindView() {
         toolbar = findViewById(R.id.toolbar);
+        appBarLayout = findViewById(R.id.kanban_app_bar);
         drawerLayout = findViewById(R.id.drawer_layout);
         navigationView = findViewById(R.id.nav_view);
         actionButton = findViewById(R.id.kanban_fab);
@@ -75,22 +88,36 @@ public class KanbanActivity extends BaseActivity
         viewPager = findViewById(R.id.kanban_view_pager);
         tabLayout = findViewById(R.id.kanban_tab_layout);
         groupSpinner = findViewById(R.id.kanban_group_spinner);
-        addGroupButton = findViewById(R.id.button2);
+        addGroupButton = findViewById(R.id.kanban_add_group);
         toggleButton = new ActionBarDrawerToggle(
                 this, drawerLayout, toolbar, R.string.navigation_drawer_open,
                 R.string.navigation_drawer_close);
     }
 
+    @SuppressLint("RestrictedApi")
     @Override
     public void setupView() {
         setSupportActionBar(toolbar);
         toggleButton.syncState();
         getSupportActionBar().setDisplayShowTitleEnabled(false);
+
+        Log.d(KanbanActivity.class.getSimpleName(), String.valueOf(groupListResponses.size()));
+
+        if (groupListResponses.size() == 0) {
+            tabLayout.setVisibility(View.GONE);
+            actionButton.setVisibility(View.GONE);
+            groupSpinner.setVisibility(View.GONE);
+            appBarLayout.setElevation(4);
+        } else {
+            tabLayout.setVisibility(View.VISIBLE);
+            actionButton.setVisibility(View.GONE);
+            groupSpinner.setVisibility(View.VISIBLE);
+            appBarLayout.setElevation(0);
+        }
     }
 
     @Override
     public void bindData() {
-        /*** Setup Group Spinner ***/
         updateListGroupSpinner();
     }
 
@@ -106,8 +133,6 @@ public class KanbanActivity extends BaseActivity
                             for (GroupListResponse group : groupListResponses) {
                                 groupNames.add(group.getGroupName());
                             }
-
-//                            groupNames.add("+ New Group");
 
                             ArrayAdapter<String> adapter = new ArrayAdapter<>(getApplicationContext()
                                     , R.layout.spinner_title_item, groupNames);
@@ -194,15 +219,11 @@ public class KanbanActivity extends BaseActivity
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
 
         switch (item.getItemId()) {
             case android.R.id.home:
                 drawerLayout.openDrawer(GravityCompat.START);
                 return true;
-
             case R.id.action_settings:
                 return true;
             case R.id.action_logout:
@@ -220,25 +241,38 @@ public class KanbanActivity extends BaseActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
+
         if (id == R.id.nav_invite) {
-            Intent intent = new Intent(KanbanActivity.this, InviteMemberActivity.class);
-            intent.putExtra("groupId", groupListResponses.get(currentPosition).getGroupId());
-            startActivity(intent);
+            if (groupListResponses.size() != 0) {
+                Intent intent = new Intent(KanbanActivity.this, InviteMemberActivity.class);
+                intent.putExtra("groupId", groupListResponses.get(currentPosition).getGroupId());
+                startActivity(intent);
+            } else {
+                Toast.makeText(this, "Create Group First!", Toast.LENGTH_SHORT);
+            }
         } else if (id == R.id.nav_record) {
             startActivity(new Intent(KanbanActivity.this, RecordActivity.class));
-        } else if (id == R.id.nav_slideshow) {
+        } else if (id == R.id.nav_burndown_chart) {
+            if (groupListResponses.size() != 0) {
+                startActivity(new Intent(KanbanActivity.this, BurndownChartActivity.class));
+            } else {
+                Toast.makeText(this, "Create Group First!", Toast.LENGTH_SHORT);
+            }
+        } else if (id == R.id.nav_event) {
+            if (groupListResponses.size() != 0) {
+                Intent intent = new Intent(KanbanActivity.this, EventActivity.class);
+                intent.putExtra("groupId", groupListResponses.get(currentPosition).getGroupId());
+                startActivity(intent);
+            } else {
+                Toast.makeText(this, "Create Group First!", Toast.LENGTH_SHORT);
+            }
+        } else if (id == R.id.nav_location) {
             startActivity(new Intent(KanbanActivity.this, LocationActivity.class));
-        } else if (id == R.id.nav_manage) {
-            Intent intent = new Intent(KanbanActivity.this, EventActivity.class);
-            intent.putExtra("groupId", groupListResponses.get(currentPosition).getGroupId());
-            startActivity(intent);
-        } else if (id == R.id.nav_share) {
-
         } else if (id == R.id.nav_send) {
 
         }
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
@@ -249,7 +283,7 @@ public class KanbanActivity extends BaseActivity
         final EditText taskNameInput = inflater.findViewById(R.id.form_task_name);
         final EditText taskDescInput = inflater.findViewById(R.id.form_task_desc);
         final EditText taskWorkHourInput = inflater.findViewById(R.id.form_task_work_hour);
-        final Spinner spinner = (Spinner) inflater.findViewById(R.id.task_spinner);
+        final Spinner spinner = inflater.findViewById(R.id.task_spinner);
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(KanbanActivity.this, R.array.kanban_status, android.R.layout.simple_spinner_item);
         // Specify the layout to use when the list of choices appears
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -298,7 +332,7 @@ public class KanbanActivity extends BaseActivity
                 .setPositiveButton("Create", (dialog, which) -> {
                     String groupName = groupNameInput.getText().toString().trim();
                     String groupDesc = groupDescInput.getText().toString().trim();
-                    String totalSprint = totalSprintInput.getText().toString().trim();
+                    int totalSprint = Integer.parseInt(totalSprintInput.getText().toString().trim());
                     String sprintTime = sprintTimeInput.getText().toString();
 
                     createNewGroup(groupName, groupDesc, totalSprint, sprintTime);
@@ -333,19 +367,20 @@ public class KanbanActivity extends BaseActivity
         }
     };
 
-    private void createNewGroup(String groupName, String groupDesc, String totalSprint, String sprintTime) {
+    private void createNewGroup(String groupName, String groupDesc, int totalSprint, String sprintTime) {
         ApiService.getApi().createGroup(groupName, groupDesc, PreferenceUtils.getUserId(this))
                 .enqueue(new Callback<ApiResponse<Group>>() {
                     @Override
                     public void onResponse(Call<ApiResponse<Group>> call, Response<ApiResponse<Group>> response) {
                         updateListGroupSpinner();
+                        setupView();
+
                         if (response.isSuccessful()) {
                             createNewEvent(response.body().getData().getGroupId(), totalSprint, sprintTime);
                             Intent intent = new Intent(KanbanActivity.this, InviteMemberActivity.class);
                             intent.putExtra("groupId", response.body().getData().getGroupId());
                             startActivity(intent);
                         }
-
                     }
 
                     @Override
@@ -355,12 +390,36 @@ public class KanbanActivity extends BaseActivity
                 });
     }
 
-    private void createNewEvent(int groupId, String totalSprint, String sprintTime) {
+    private void createNewEvent(int groupId, int totalSprint, String sprintTime) {
+        Calendar calendar = Calendar.getInstance();
+        String[] time = sprintTime.split(":");
+        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 
+        calendar.setTime(new Date());
+
+        setAlarm(calendar.getTimeInMillis() + 5000);
+
+//        for (int i = 1; i < totalSprint * 14; i++) {
+//            calendar.add(Calendar.DATE, 1);
+//            calendar.set(Calendar.HOUR, Integer.parseInt(time[0].trim()));
+//            calendar.set(Calendar.MINUTE, Integer.parseInt(time[1].trim()));
+//            calendar.setTimeInMillis(calendar.getTimeInMillis()-600000);
+//
+//            setAlarm(calendar.getTimeInMillis());
+//            Log.d(KanbanActivity.class.getSimpleName(), formatter.format(calendar.getTime()));
+//        }
     }
 
-    private void createNewTask (String taskName, String taskDesc, String status_kanban, int taskWorkHour) {
-        ApiService.getApi().createTask(groupListResponses.get(currentPosition).getGroupId(),taskName, taskDesc, status_kanban,taskWorkHour)
+    private void setAlarm(long alarmTime) {
+        Intent alarmIntent = new Intent(this, AlarmReceiver.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 99, alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+
+        alarmManager.set(AlarmManager.RTC_WAKEUP, alarmTime, pendingIntent);
+    }
+
+    private void createNewTask (String taskName, String taskDesc, String kanbanStatus, int taskWorkHour) {
+        ApiService.getApi().createTask(groupListResponses.get(currentPosition).getGroupId(),taskName, taskDesc, kanbanStatus,taskWorkHour)
                 .enqueue(new Callback<ApiResponse<String>>() {
                     @Override
                     public void onResponse(Call<ApiResponse<String>> call, Response<ApiResponse<String>> response) {
@@ -368,7 +427,6 @@ public class KanbanActivity extends BaseActivity
                         if (response.isSuccessful()) {
                             setupKanbanColumn(groupListResponses.get(currentPosition).getGroupId());
                         }
-
                     }
 
                     @Override

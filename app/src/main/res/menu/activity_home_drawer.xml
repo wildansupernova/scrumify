@@ -13,21 +13,20 @@
             android:icon="@drawable/ic_menu_gallery"
             android:title="Record" />
         <item
-            android:id="@+id/nav_slideshow"
-            android:icon="@drawable/ic_menu_slideshow"
-            android:title="Slideshow" />
-        <item
-            android:id="@+id/nav_manage"
+            android:id="@+id/nav_burndown_chart"
             android:icon="@drawable/ic_menu_manage"
-            android:title="Tools" />
+            android:title="Burndown Chart" />
+        <item
+            android:id="@+id/nav_event"
+            android:icon="@drawable/ic_menu_slideshow"
+            android:title="Event" />
     </group>
-
-    <item android:title="Communicate">
+    <item android:title="Additional Info">
         <menu>
             <item
-                android:id="@+id/nav_share"
+                android:id="@+id/nav_location"
                 android:icon="@drawable/ic_menu_share"
-                android:title="Share" />
+                android:title="Location" />
             <item
                 android:id="@+id/nav_send"
                 android:icon="@drawable/ic_menu_send"

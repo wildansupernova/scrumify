@@ -11,17 +11,9 @@
         android:layout_height="match_parent">
 
         <com.anychart.AnyChartView
-            android:id="@+id/burdown_chart"
+            android:id="@+id/burndown_chart"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
-
-        <android.support.design.widget.FloatingActionButton
-            android:onClick="startService"
-            android:layout_gravity="end|bottom"
-            android:layout_margin="16dp"
-            android:src="@drawable/ic_menu_camera"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
 
     </FrameLayout>
 
