@@ -60,7 +60,6 @@ public class KanbanActivity extends BaseActivity
     private ViewPager viewPager;
     private TabLayout tabLayout;
     private Spinner groupSpinner;
-    private Button addGroupButton;
 
     /*** Activity Data ***/
     List<GroupListResponse> groupListResponses;
@@ -88,7 +87,6 @@ public class KanbanActivity extends BaseActivity
         viewPager = findViewById(R.id.kanban_view_pager);
         tabLayout = findViewById(R.id.kanban_tab_layout);
         groupSpinner = findViewById(R.id.kanban_group_spinner);
-        addGroupButton = findViewById(R.id.kanban_add_group);
         toggleButton = new ActionBarDrawerToggle(
                 this, drawerLayout, toolbar, R.string.navigation_drawer_open,
                 R.string.navigation_drawer_close);
@@ -192,7 +190,6 @@ public class KanbanActivity extends BaseActivity
     public void bindListener() {
         actionButton.setOnClickListener(actionButtonListener);
 
-        addGroupButton.setOnClickListener(addButtonListener);
         drawerLayout.addDrawerListener(toggleButton);
         navigationView.setNavigationItemSelectedListener(this);
         viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
@@ -223,6 +220,9 @@ public class KanbanActivity extends BaseActivity
         switch (item.getItemId()) {
             case android.R.id.home:
                 drawerLayout.openDrawer(GravityCompat.START);
+                return true;
+            case R.id.action_add_group:
+                showDialogAddGroup();
                 return true;
             case R.id.action_settings:
                 return true;
@@ -306,7 +306,8 @@ public class KanbanActivity extends BaseActivity
                 .show();
     };
 
-    private View.OnClickListener addButtonListener = v -> {
+
+    private void showDialogAddGroup() {
         View inflater = getLayoutInflater().inflate(R.layout.form_new_group, null);
         final EditText groupNameInput = inflater.findViewById(R.id.form_group_name);
         final EditText groupDescInput = inflater.findViewById(R.id.form_group_desc);
@@ -340,7 +341,7 @@ public class KanbanActivity extends BaseActivity
                 .setNegativeButton("Cancel", null)
                 .create()
                 .show();
-    };
+    }
 
     private TabLayout.OnTabSelectedListener tabSelectedListener = new TabLayout.OnTabSelectedListener() {
         @Override
