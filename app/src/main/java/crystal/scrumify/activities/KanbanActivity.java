@@ -224,8 +224,6 @@ public class KanbanActivity extends BaseActivity
             case R.id.action_add_group:
                 showDialogAddGroup();
                 return true;
-            case R.id.action_settings:
-                return true;
             case R.id.action_logout:
                 PreferenceUtils.setLogin(KanbanActivity.this, false);
                 startActivity(new Intent(KanbanActivity.this, AuthActivity.class));
