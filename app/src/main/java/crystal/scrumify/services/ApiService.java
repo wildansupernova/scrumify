@@ -5,6 +5,7 @@ import com.google.gson.GsonBuilder;
 
 import java.util.List;
 
+import crystal.scrumify.models.Comment;
 import crystal.scrumify.models.Event;
 import crystal.scrumify.models.Group;
 import crystal.scrumify.models.User;
@@ -28,7 +29,7 @@ import retrofit2.http.Query;
 
 public class ApiService {
 
-    public static final String BASE_URL = "http://192.168.43.30:8000/api/";
+    public static final String BASE_URL = "http://192.168.43.22:8000/api/";
 
     public static Api getApi() {
         Gson gson = new GsonBuilder().setLenient().create();
@@ -99,6 +100,19 @@ public class ApiService {
         @PUT("task/move/{task_id}")
         Call<ApiResponse<String>> moveTask(
                 @Path("task_id") int taskId
+        );
+
+        @GET("task/{task_id}/comment")
+        Call<ApiResponse<List<Comment>>> getComments(
+                @Path("task_id") int taskId
+        );
+
+        @FormUrlEncoded
+        @POST("user/{user_id}/task/{task_id}/comment")
+        Call<ApiResponse<String>> createComment(
+                @Path("user_id") int userId,
+                @Path("task_id") int taskId,
+                @Field("comment") String comment
         );
     }
 }

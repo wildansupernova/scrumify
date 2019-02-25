@@ -58,7 +58,7 @@ public class BurndownChartActivity extends AppCompatActivity {
                         System.out.println(chartValue.getX());
                         System.out.println(chartValue.getValue());
                         seriesData.add(new CustomDataEntry(chartValue));
-                        seriesData.add(new CustomDataEntry(new ChartValue("2019-02-26", 87)));
+//                        seriesData.add(new CustomDataEntry(new ChartValue("2019-02-26", 87)));
                     }
 
                     fillChart();

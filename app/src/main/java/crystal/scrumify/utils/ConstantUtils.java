@@ -9,6 +9,7 @@ public class ConstantUtils {
 
     public static final int BURTDOWN_CODE = 100;
     public static final int RC_SIGN_IN = 9001;
+    public static final String TASK_ID_KEY = "task_id_key";
 
     public static int REQ_PERMISSION = 10;
 

@@ -18,10 +18,12 @@ import java.util.List;
 import crystal.scrumify.R;
 import crystal.scrumify.activities.CommentActivity;
 import crystal.scrumify.activities.KanbanActivity;
+import crystal.scrumify.models.Comment;
 import crystal.scrumify.models.Group;
 import crystal.scrumify.responses.ApiResponse;
 import crystal.scrumify.responses.TaskResponse;
 import crystal.scrumify.services.ApiService;
+import crystal.scrumify.utils.ConstantUtils;
 import crystal.scrumify.utils.PreferenceUtils;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -73,7 +75,9 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskHolder> {
             @Override
             public void onClick(View v) {
                 Context context = v.getContext();
-                context.startActivity(new Intent(context, CommentActivity.class));
+                Intent intent = new Intent(context, CommentActivity.class);
+                intent.putExtra(ConstantUtils.TASK_ID_KEY, task.getTaskId());
+                context.startActivity(intent);
             }
         };
 

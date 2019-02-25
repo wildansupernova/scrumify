@@ -1,8 +1,13 @@
 package crystal.scrumify.models;
 
+import com.google.gson.annotations.SerializedName;
+
 public class Comment {
 
+    @SerializedName("name")
     private String commentator;
+
+    @SerializedName("comment")
     private String content;
 
     public Comment(String commentator, String content) {
