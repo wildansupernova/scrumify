@@ -75,14 +75,6 @@ public class ApiService {
                 @Field("email") String emailReceiver
         );
 
-        @FormUrlEncoded
-        @POST("group/event")
-        Call<ApiResponse<String>> createGroupEvent(
-                @Field("group_id") int groupId,
-                @Field("total_sprint") int totalSprint,
-                @Field("sprint_time") String sprintTime
-        );
-
         @GET("group/{group_id}/tasks")
         Call<ApiResponse<List<TaskResponse>>> getTasks(
                 @Path("group_id") int groupId,

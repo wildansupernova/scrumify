@@ -397,7 +397,7 @@ public class KanbanActivity extends BaseActivity
 
         calendar.setTime(new Date());
 
-        setAlarm(calendar.getTimeInMillis() + 5000);
+        setAlarm(calendar.getTimeInMillis() + 3000);
 
 //        for (int i = 1; i < totalSprint * 14; i++) {
 //            calendar.add(Calendar.DATE, 1);

@@ -8,7 +8,6 @@ import android.content.Intent;
 import android.support.v4.app.NotificationCompat;
 
 import crystal.scrumify.R;
-import crystal.scrumify.activities.KanbanActivity;
 
 public class AlarmReceiver extends BroadcastReceiver {
     @Override
@@ -20,7 +19,7 @@ public class AlarmReceiver extends BroadcastReceiver {
                 .setContentTitle("Daily Meeting!")
                 .setContentText("You Have Daily Meeting in 10 Minutes")
                 .setTicker("Alert! Daily Meeting")
-                .setDefaults(Notification.DEFAULT_LIGHTS | Notification.DEFAULT_SOUND);
+                .setPriority(NotificationManager.IMPORTANCE_HIGH);
 
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.notify(1, builder.build());
