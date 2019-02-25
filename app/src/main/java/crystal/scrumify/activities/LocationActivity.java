@@ -16,10 +16,12 @@ public class LocationActivity extends AppCompatActivity {
     ProgressBar progressBar;
     AddressService addressService;
 
+    String location;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
          setContentView(R.layout.activity_location);
+
 
         latitudeText = findViewById(R.id.latitude);
         longitudeText = findViewById(R.id.longitude);

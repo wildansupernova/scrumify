@@ -1,14 +1,16 @@
 package crystal.scrumify.activities;
 
+import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
@@ -44,6 +46,7 @@ public class KanbanActivity extends BaseActivity
 
     /*** XML View Component ***/
     private Toolbar toolbar;
+    private AppBarLayout appBarLayout;
     private FloatingActionButton actionButton;
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle toggleButton;
@@ -65,6 +68,7 @@ public class KanbanActivity extends BaseActivity
     @Override
     public void bindView() {
         toolbar = findViewById(R.id.toolbar);
+        appBarLayout = findViewById(R.id.kanban_app_bar);
         drawerLayout = findViewById(R.id.drawer_layout);
         navigationView = findViewById(R.id.nav_view);
         actionButton = findViewById(R.id.kanban_fab);
@@ -72,24 +76,35 @@ public class KanbanActivity extends BaseActivity
         viewPager = findViewById(R.id.kanban_view_pager);
         tabLayout = findViewById(R.id.kanban_tab_layout);
         groupSpinner = findViewById(R.id.kanban_group_spinner);
-        addGroupButton = findViewById(R.id.button2);
+        addGroupButton = findViewById(R.id.kanban_add_group);
         toggleButton = new ActionBarDrawerToggle(
                 this, drawerLayout, toolbar, R.string.navigation_drawer_open,
                 R.string.navigation_drawer_close);
     }
 
+    @SuppressLint("RestrictedApi")
     @Override
     public void setupView() {
         setSupportActionBar(toolbar);
         toggleButton.syncState();
         getSupportActionBar().setDisplayShowTitleEnabled(false);
+
+        if (groupListResponses.size() == 0) {
+            tabLayout.setVisibility(View.GONE);
+            actionButton.setVisibility(View.GONE);
+            groupSpinner.setVisibility(View.GONE);
+            appBarLayout.setElevation(4);
+        } else {
+            tabLayout.setVisibility(View.VISIBLE);
+            actionButton.setVisibility(View.GONE);
+            groupSpinner.setVisibility(View.VISIBLE);
+            appBarLayout.setElevation(0);
+        }
     }
 
     @Override
     public void bindData() {
-        /*** Setup Group Spinner ***/
         updateListGroupSpinner();
-
     }
 
     private void updateListGroupSpinner() {
@@ -104,8 +119,6 @@ public class KanbanActivity extends BaseActivity
                             for (GroupListResponse group : groupListResponses) {
                                 groupNames.add(group.getGroupName());
                             }
-
-//                            groupNames.add("+ New Group");
 
                             ArrayAdapter<String> adapter = new ArrayAdapter<>(getApplicationContext()
                                     , R.layout.spinner_title_item, groupNames);
@@ -192,9 +205,6 @@ public class KanbanActivity extends BaseActivity
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
 
         switch (item.getItemId()) {
             case android.R.id.home:
@@ -227,7 +237,7 @@ public class KanbanActivity extends BaseActivity
         } else if (id == R.id.nav_slideshow) {
             startActivity(new Intent(KanbanActivity.this, LocationActivity.class));
         } else if (id == R.id.nav_manage) {
-
+            startActivity(new Intent(KanbanActivity.this, BurndownChartActivity.class));
         } else if (id == R.id.nav_share) {
 
         } else if (id == R.id.nav_send) {
@@ -404,6 +414,7 @@ public class KanbanActivity extends BaseActivity
                     @Override
                     public void onResponse(Call<ApiResponse<Group>> call, Response<ApiResponse<Group>> response) {
                         updateListGroupSpinner();
+                        setupView();
                         if (response.isSuccessful()) {
 //                            Intent intent = new Intent(KanbanActivity.this, InviteMemberActivity.class);
 //                            intent.putExtra("groupId", response.body().getData().getGroupId());

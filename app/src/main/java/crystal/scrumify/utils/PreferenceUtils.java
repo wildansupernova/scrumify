@@ -83,4 +83,8 @@ public class PreferenceUtils {
         return getBooleanPref(context, ConstantUtils.PREF_IS_LOGIN_ARG);
     }
 
+    // TODO LATER
+    public static int getGroupId() {
+        return 1;
+    }
 }

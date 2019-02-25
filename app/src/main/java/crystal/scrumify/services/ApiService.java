@@ -8,6 +8,7 @@ import java.util.List;
 import crystal.scrumify.models.Group;
 import crystal.scrumify.models.User;
 import crystal.scrumify.responses.ApiResponse;
+import crystal.scrumify.responses.ChartValue;
 import crystal.scrumify.responses.GroupListResponse;
 import crystal.scrumify.responses.LoginResponse;
 import crystal.scrumify.responses.TaskResponse;
@@ -26,7 +27,7 @@ import retrofit2.http.Query;
 
 public class ApiService {
 
-    public static final String BASE_URL = "http://192.168.1.13:8000/api/";
+    public static final String BASE_URL = "http://192.168.43.22:8000/api/";
 
     public static Api getApi() {
         Gson gson = new GsonBuilder().setLenient().create();
@@ -92,6 +93,11 @@ public class ApiService {
         @PUT("task/move/{task_id}")
         Call<ApiResponse<String>> moveTask(
                 @Path("task_id") int taskId
+        );
+
+        @GET("group/{group_id}/history")
+        Call<ApiResponse<List<ChartValue>>> getChartValue(
+                @Path("group_id") int groupId
         );
     }
 }
