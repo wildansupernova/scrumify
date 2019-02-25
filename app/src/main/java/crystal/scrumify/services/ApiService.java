@@ -26,7 +26,7 @@ import retrofit2.http.Query;
 
 public class ApiService {
 
-    public static final String BASE_URL = "http://192.168.1.13:8000/api/";
+    public static final String BASE_URL = "http://192.168.43.22:8000/api/";
 
     public static Api getApi() {
         Gson gson = new GsonBuilder().setLenient().create();

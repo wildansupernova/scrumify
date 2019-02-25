@@ -1,5 +1,6 @@
 package crystal.scrumify.activities;
 
+import android.app.TimePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.design.widget.FloatingActionButton;
@@ -21,9 +22,11 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import crystal.scrumify.R;
@@ -89,7 +92,6 @@ public class KanbanActivity extends BaseActivity
     public void bindData() {
         /*** Setup Group Spinner ***/
         updateListGroupSpinner();
-
     }
 
     private void updateListGroupSpinner() {
@@ -227,7 +229,9 @@ public class KanbanActivity extends BaseActivity
         } else if (id == R.id.nav_slideshow) {
             startActivity(new Intent(KanbanActivity.this, LocationActivity.class));
         } else if (id == R.id.nav_manage) {
-
+            Intent intent = new Intent(KanbanActivity.this, EventActivity.class);
+            intent.putExtra("groupId", groupListResponses.get(currentPosition).getGroupId());
+            startActivity(intent);
         } else if (id == R.id.nav_share) {
 
         } else if (id == R.id.nav_send) {
@@ -240,115 +244,69 @@ public class KanbanActivity extends BaseActivity
     }
 
     /*** Activity Listener ***/
-    private View.OnClickListener actionButtonListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-//            Snackbar.make(v, "Replace with your own action", Snackbar.LENGTH_LONG)
-//                    .setAction("Action", null).show();
-            View inflater = getLayoutInflater().inflate(R.layout.form_new_task, null);
-            final EditText taskNameInput = inflater.findViewById(R.id.form_task_name);
-            final EditText taskDescInput = inflater.findViewById(R.id.form_task_desc);
-            final EditText taskWorkHourInput = inflater.findViewById(R.id.form_task_work_hour);
-            final Spinner spinner = (Spinner) inflater.findViewById(R.id.task_spinner);
-            ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(KanbanActivity.this, R.array.kanban_status, android.R.layout.simple_spinner_item);
-            // Specify the layout to use when the list of choices appears
-            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-            // Apply the adapter to the spinner
-            spinner.setAdapter(adapter);
+    private View.OnClickListener actionButtonListener = v -> {
+        View inflater = getLayoutInflater().inflate(R.layout.form_new_task, null);
+        final EditText taskNameInput = inflater.findViewById(R.id.form_task_name);
+        final EditText taskDescInput = inflater.findViewById(R.id.form_task_desc);
+        final EditText taskWorkHourInput = inflater.findViewById(R.id.form_task_work_hour);
+        final Spinner spinner = (Spinner) inflater.findViewById(R.id.task_spinner);
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(KanbanActivity.this, R.array.kanban_status, android.R.layout.simple_spinner_item);
+        // Specify the layout to use when the list of choices appears
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        // Apply the adapter to the spinner
+        spinner.setAdapter(adapter);
 
-            AlertDialog.Builder builder = new AlertDialog.Builder(KanbanActivity.this);
-            builder.setTitle("Create New Task")
-                    .setView(inflater)
-                    .setPositiveButton("Create", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            String taskName = taskNameInput.getText().toString().trim();
-                            String taskDesc = taskDescInput.getText().toString().trim();
-                            int taskWorkHour = Integer.parseInt(taskWorkHourInput.getText().toString().trim());
-                            String status_kanban = spinner.getSelectedItem().toString().trim();
-                            createNewTask(taskName, taskDesc, status_kanban, taskWorkHour);
-                        }
-                    })
-                    .setNegativeButton("Cancel", null)
-                    .create()
-                    .show();
-        }
+        AlertDialog.Builder builder = new AlertDialog.Builder(KanbanActivity.this);
+        builder.setTitle("Create New Task")
+                .setView(inflater)
+                .setPositiveButton("Create", (dialog, which) -> {
+                    String taskName = taskNameInput.getText().toString().trim();
+                    String taskDesc = taskDescInput.getText().toString().trim();
+                    int taskWorkHour = Integer.parseInt(taskWorkHourInput.getText().toString().trim());
+                    String kanbanStatus = spinner.getSelectedItem().toString().trim();
+
+                    createNewTask(taskName, taskDesc, kanbanStatus, taskWorkHour);
+                })
+                .setNegativeButton("Cancel", null)
+                .create()
+                .show();
     };
 
-    private void createNewTask (String taskName, String taskDesc, String status_kanban, int taskWorkHour) {
-        ApiService.getApi().createTask(groupListResponses.get(currentPosition).getGroupId(),taskName, taskDesc, status_kanban,taskWorkHour)
-                .enqueue(new Callback<ApiResponse<String>>() {
-                    @Override
-                    public void onResponse(Call<ApiResponse<String>> call, Response<ApiResponse<String>> response) {
+    private View.OnClickListener addButtonListener = v -> {
+        View inflater = getLayoutInflater().inflate(R.layout.form_new_group, null);
+        final EditText groupNameInput = inflater.findViewById(R.id.form_group_name);
+        final EditText groupDescInput = inflater.findViewById(R.id.form_group_desc);
+        final EditText totalSprintInput = inflater.findViewById(R.id.form_group_sprint);
+        final EditText sprintTimeInput = inflater.findViewById(R.id.form_group_time);
 
-                        if (response.isSuccessful()) {
-                            setupKanbanColumn(groupListResponses.get(currentPosition).getGroupId());
-                        }
+        View.OnClickListener sprintTimeListener = view -> {
+            Calendar currentTime = Calendar.getInstance();
+            int hour = currentTime.get(Calendar.HOUR_OF_DAY);
+            int minute = currentTime.get(Calendar.MINUTE);
+            TimePickerDialog timePickerDialog;
+            timePickerDialog = new TimePickerDialog(KanbanActivity.this, (timePicker, selectedHour, selectedMinute) ->
+                    sprintTimeInput.setText(selectedHour + ":" + selectedMinute), hour, minute, false);
+            timePickerDialog.setTitle("Select Time for Daily Meeting");
+            timePickerDialog.show();
+        };
 
-                    }
+        sprintTimeInput.setOnClickListener(sprintTimeListener);
 
-                    @Override
-                    public void onFailure(Call<ApiResponse<String>> call, Throwable t) {
-                        Log.d(KanbanActivity.class.getSimpleName(), t.getMessage());
-                    }
-                });
-    }
+        AlertDialog.Builder builder = new AlertDialog.Builder(KanbanActivity.this);
+        builder.setTitle("Create New Group")
+                .setView(inflater)
+                .setPositiveButton("Create", (dialog, which) -> {
+                    String groupName = groupNameInput.getText().toString().trim();
+                    String groupDesc = groupDescInput.getText().toString().trim();
+                    String totalSprint = totalSprintInput.getText().toString().trim();
+                    String sprintTime = sprintTimeInput.getText().toString();
 
-    private View.OnClickListener addButtonListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            View inflater = getLayoutInflater().inflate(R.layout.form_new_group, null);
-            final EditText groupNameInput = inflater.findViewById(R.id.form_group_name);
-            final EditText groupDescInput = inflater.findViewById(R.id.form_group_desc);
-
-            AlertDialog.Builder builder = new AlertDialog.Builder(KanbanActivity.this);
-            builder.setTitle("Create New Group")
-                    .setView(inflater)
-                    .setPositiveButton("Create", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            String groupName = groupNameInput.getText().toString().trim();
-                            String groupDesc = groupDescInput.getText().toString().trim();
-                            createNewGroup(groupName, groupDesc);
-                        }
-                    })
-                    .setNegativeButton("Cancel", null)
-                    .create()
-                    .show();
-        }
+                    createNewGroup(groupName, groupDesc, totalSprint, sprintTime);
+                })
+                .setNegativeButton("Cancel", null)
+                .create()
+                .show();
     };
-
-//    private View.OnClickListener addTaskButtonListener = new View.OnClickListener() {
-//        @Override
-//        public void onClick(View v) {
-//            View inflater = getLayoutInflater().inflate(R.layout.form_new_group, null);
-//            final EditText taskNameInput = inflater.findViewById(R.id.form_task_name);
-//            final EditText taskDescInput = inflater.findViewById(R.id.form_task_desc);
-//
-//            final Spinner spinner = (Spinner) findViewById(R.id.task_spinner);
-//            ArrayAdapter<String> adapter = ArrayAdapter.createFromResource(this, R.array.kanban_status, android.R.layout.simple_spinner_item);
-//            // Specify the layout to use when the list of choices appears
-//            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-//            // Apply the adapter to the spinner
-//            spinner.setAdapter(adapter);
-//
-//            AlertDialog.Builder builder = new AlertDialog.Builder(KanbanActivity.this);
-//            builder.setTitle("Create New Task")
-//                    .setView(inflater)
-//                    .setPositiveButton("Create", new DialogInterface.OnClickListener() {
-//                        @Override
-//                        public void onClick(DialogInterface dialog, int which) {
-//                            String groupName = taskNameInput.getText().toString().trim();
-//                            String groupDesc = taskDescInput.getText().toString().trim();
-//                            String status_kanban = spinner.getSelectedItem().toString();
-////                            createNewGroup(groupName, groupDesc);
-//                        }
-//                    })
-//                    .setNegativeButton("Cancel", null)
-//                    .create()
-//                    .show();
-//        }
-//    };
 
     private TabLayout.OnTabSelectedListener tabSelectedListener = new TabLayout.OnTabSelectedListener() {
         @Override
@@ -366,30 +324,7 @@ public class KanbanActivity extends BaseActivity
     private Spinner.OnItemSelectedListener spinnerSelectedListener = new Spinner.OnItemSelectedListener() {
         @Override
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-
-
-//            if (position == groupListResponses.size()) {
-//                View inflater = getLayoutInflater().inflate(R.layout.form_new_group, null);
-//                final EditText groupNameInput = inflater.findViewById(R.id.form_group_name);
-//                final EditText groupDescInput = inflater.findViewById(R.id.form_group_desc);
-//
-//                AlertDialog.Builder builder = new AlertDialog.Builder(KanbanActivity.this);
-//                builder.setTitle("Create New Group")
-//                        .setView(inflater)
-//                        .setPositiveButton("Create", new DialogInterface.OnClickListener() {
-//                            @Override
-//                            public void onClick(DialogInterface dialog, int which) {
-//                                String groupName = groupNameInput.getText().toString().trim();
-//                                String groupDesc = groupDescInput.getText().toString().trim();
-//                                createNewGroup(groupName, groupDesc);
-//                            }
-//                        })
-//                        .setNegativeButton("Cancel", null)
-//                        .create()
-//                        .show();
-//            } else {
-                setupKanbanColumn(groupListResponses.get(position).getGroupId());
-//            }
+            setupKanbanColumn(groupListResponses.get(position).getGroupId());
         }
 
         @Override
@@ -398,22 +333,46 @@ public class KanbanActivity extends BaseActivity
         }
     };
 
-    private void createNewGroup(String groupName, String groupDesc) {
+    private void createNewGroup(String groupName, String groupDesc, String totalSprint, String sprintTime) {
         ApiService.getApi().createGroup(groupName, groupDesc, PreferenceUtils.getUserId(this))
                 .enqueue(new Callback<ApiResponse<Group>>() {
                     @Override
                     public void onResponse(Call<ApiResponse<Group>> call, Response<ApiResponse<Group>> response) {
                         updateListGroupSpinner();
                         if (response.isSuccessful()) {
-//                            Intent intent = new Intent(KanbanActivity.this, InviteMemberActivity.class);
-//                            intent.putExtra("groupId", response.body().getData().getGroupId());
-//                            startActivity(intent);
+                            createNewEvent(response.body().getData().getGroupId(), totalSprint, sprintTime);
+                            Intent intent = new Intent(KanbanActivity.this, InviteMemberActivity.class);
+                            intent.putExtra("groupId", response.body().getData().getGroupId());
+                            startActivity(intent);
                         }
 
                     }
 
                     @Override
                     public void onFailure(Call<ApiResponse<Group>> call, Throwable t) {
+                        Log.d(KanbanActivity.class.getSimpleName(), t.getMessage());
+                    }
+                });
+    }
+
+    private void createNewEvent(int groupId, String totalSprint, String sprintTime) {
+
+    }
+
+    private void createNewTask (String taskName, String taskDesc, String status_kanban, int taskWorkHour) {
+        ApiService.getApi().createTask(groupListResponses.get(currentPosition).getGroupId(),taskName, taskDesc, status_kanban,taskWorkHour)
+                .enqueue(new Callback<ApiResponse<String>>() {
+                    @Override
+                    public void onResponse(Call<ApiResponse<String>> call, Response<ApiResponse<String>> response) {
+
+                        if (response.isSuccessful()) {
+                            setupKanbanColumn(groupListResponses.get(currentPosition).getGroupId());
+                        }
+
+                    }
+
+                    @Override
+                    public void onFailure(Call<ApiResponse<String>> call, Throwable t) {
                         Log.d(KanbanActivity.class.getSimpleName(), t.getMessage());
                     }
                 });

@@ -60,7 +60,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskHolder> {
         return items.size();
     }
 
-    public class TaskHolder extends RecyclerView.ViewHolder {
+    class TaskHolder extends RecyclerView.ViewHolder {
 
         private TextView title;
         private TextView description;
@@ -100,7 +100,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskHolder> {
             }
         };
 
-        public TaskHolder(View itemView) {
+        TaskHolder(View itemView) {
             super(itemView);
             bindView();
             bindListener();
@@ -119,7 +119,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskHolder> {
             move.setOnClickListener(moveClickListener);
         }
 
-        public void bind(TaskResponse item) {
+        void bind(TaskResponse item) {
             if (!item.moveable()) {
                 move.setVisibility(View.GONE);
             }

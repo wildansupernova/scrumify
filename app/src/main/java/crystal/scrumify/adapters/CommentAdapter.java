@@ -7,7 +7,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import crystal.scrumify.R;
@@ -16,7 +15,7 @@ import crystal.scrumify.models.Comment;
 
 public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentHolder> {
 
-    private List<Comment> items = new ArrayList<>();
+    private List<Comment> items;
     private int itemLayout = R.layout.item_comment;
 
     public CommentAdapter(List<Comment> items) {
@@ -46,11 +45,11 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentH
         return items.size();
     }
 
-    public class CommentHolder extends RecyclerView.ViewHolder {
+    class CommentHolder extends RecyclerView.ViewHolder {
 
         private TextView commentTextView;
 
-        public CommentHolder(View itemView) {
+        CommentHolder(View itemView) {
             super(itemView);
             bindView();
         }
@@ -59,7 +58,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentH
             commentTextView = itemView.findViewById(R.id.comment);
         }
 
-        public void bind(Comment item) {
+        void bind(Comment item) {
             String comment = "<b>" + item.getCommentator() + "</b> " + item.getContent();
             commentTextView.setText(Html.fromHtml(comment));
         }

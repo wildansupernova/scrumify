@@ -26,4 +26,40 @@
         android:layout_marginBottom="4dp"
         android:hint="Group description" />
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="4dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <EditText
+            android:id="@+id/form_group_sprint"
+            style="@style/TextAppearance.AppCompat.Medium"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textAlignment="center"
+            android:hint="Total sprint" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:gravity="center_vertical"
+            android:text="Sprint. Every"
+            android:layout_height="wrap_content" />
+
+        <EditText
+            android:id="@+id/form_group_time"
+            style="@style/TextAppearance.AppCompat.Medium"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:onClick="pickTime"
+            android:textAlignment="center"
+            android:hint="Hour" />
+
+    </LinearLayout>
+
 </LinearLayout>

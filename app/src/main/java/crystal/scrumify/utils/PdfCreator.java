@@ -29,7 +29,7 @@ public class PdfCreator {
 
     public static final String TAG = PdfCreator.class.getSimpleName();
     
-    public static void createPdf(String destFile, Context mContext, float temperature, String notulen) {
+    public static void createPdf(String destFile, Context mContext, float temperature, String location, String notulen) {
 
         if (new File(destFile).exists()) {
             new File(destFile).delete();
@@ -80,11 +80,15 @@ public class PdfCreator {
             // Fields of Order Details...
             // Adding Chunks for Title and value
             String dateNotulen = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
-            String temperatureNotulen = "(" + String.valueOf(temperature) + " °C)";
+            String temperatureNotulen = "(" + String.valueOf(temperature) + " C)";
             Font mOrderIdFont = new Font(urName, mHeadingFontSize, Font.NORMAL, mColorAccent);
             Chunk mOrderIdChunk = new Chunk("Date : " + dateNotulen + " " + temperatureNotulen, mOrderIdFont);
             Paragraph mOrderIdParagraph = new Paragraph(mOrderIdChunk);
             document.add(mOrderIdParagraph);
+
+            Chunk mLocationChunk = new Chunk("Location : " + location, mOrderIdFont);
+            Paragraph mLocationParagraph = new Paragraph(mLocationChunk);
+            document.add(mLocationParagraph);
 
             // Adding Line Breakable Space....
             document.add(new Paragraph(""));

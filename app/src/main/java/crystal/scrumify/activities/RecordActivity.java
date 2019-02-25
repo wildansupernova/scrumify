@@ -25,6 +25,8 @@ import java.util.ArrayList;
 import java.util.Locale;
 
 import crystal.scrumify.R;
+import crystal.scrumify.contracts.OnGetAddressCompleted;
+import crystal.scrumify.services.AddressService;
 import crystal.scrumify.utils.FileUtils;
 import crystal.scrumify.utils.PdfCreator;
 
@@ -47,6 +49,7 @@ public class RecordActivity extends BaseActivity implements SensorEventListener 
     private boolean isMicClicked;
     private boolean isSensorExist;
     private float temperature;
+    private String location;
     private String allText;
 
     /*** Listener ***/
@@ -78,7 +81,7 @@ public class RecordActivity extends BaseActivity implements SensorEventListener 
                     .setView(inflater)
                     .setPositiveButton("Yes", (dialog, which) -> {
                         String docName = docNameInput.getText().toString().trim();
-                        PdfCreator.createPdf(FileUtils.getAppPath(RecordActivity.this) + docName, RecordActivity.this, temperature, allText);
+                        PdfCreator.createPdf(FileUtils.getAppPath(RecordActivity.this) + docName, RecordActivity.this, temperature, location, allText);
                     })
                     .setNegativeButton("No", null)
                     .create()
@@ -120,6 +123,13 @@ public class RecordActivity extends BaseActivity implements SensorEventListener 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        AddressService addressService = new AddressService(this, new OnGetAddressCompleted() {
+            @Override
+            public void onCompleted(String address) {
+                location = address;
+            }
+        });
 
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         ambient = sensorManager.getDefaultSensor(Sensor.TYPE_AMBIENT_TEMPERATURE);
